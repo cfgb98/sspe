@@ -8,6 +8,29 @@
 
 ?>
 
+<?php 
+
+if ($_SESSION['rol']==2) {
+	$idMedico = $_SESSION['idUser'];
+}elseif ($_SESSION['rol']==3) {
+	$idEnfermera = $_SESSION['idUser'];
+}else {
+	$queryidmedico = mysqli_query($conection,"SELECT s.idseguimiento, s.idmedico
+	FROM seguimiento s
+	INNER JOIN medico m ON s.idmedico = m.idmedico");
+	while ($dataidmedico =mysqli_fetch_array($queryidmedico)) {
+		$idMedico = $dataidmedico["idmedico"];
+	}
+	$queryidenfermera = mysqli_query($conection,"SELECT s.idseguimiento, s.idenfermera
+	FROM seguimiento s
+	INNER JOIN enfermeras e ON s.idenfermera = e.idenfermeras");
+	while ($dataidenfermera =mysqli_fetch_array($queryidenfermera)) {
+		$idEnfermera = $dataidenfermera["idenfermera"];
+	}
+
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -57,9 +80,22 @@
 			$desde = ($pagina-1) * $por_pagina;
 			$total_paginas = ceil($total_registro / $por_pagina);
 
-			$query = mysqli_query($conection,"SELECT * FROM pacientes 
-			                                   WHERE estatus = 1 ORDER BY idpaciente ASC LIMIT $desde,$por_pagina 
-                                             ");
+			if ($_SESSION["rol"]==1) {
+				$query = mysqli_query($conection,"SELECT * FROM pacientes 
+				WHERE estatus = 1 ORDER BY idpaciente ASC LIMIT $desde,$por_pagina 
+			  ");
+			}elseif ($_SESSION["rol"]==2) {
+				$query = mysqli_query($conection,"SELECT p.* FROM pacientes p
+			 INNER JOIN seguimiento s ON p.idpaciente = s.idpaciente
+                WHERE s.idmedico = $idMedico AND p.estatus = 1 ORDER BY idpaciente ASC LIMIT $desde,$por_pagina 
+			  ");
+			}elseif ($_SESSION["rol"]==3) {
+				$query = mysqli_query($conection,"SELECT p.* FROM pacientes p
+			 INNER JOIN seguimiento s ON p.idpaciente = s.idpaciente
+                WHERE s.idenfermera = $idEnfermera AND p.estatus = 1 ORDER BY idpaciente ASC LIMIT $desde,$por_pagina 
+			  ");
+			}
+			
  
 			mysqli_close($conection);
 
