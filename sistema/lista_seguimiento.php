@@ -14,6 +14,20 @@ if ($_SESSION['rol']==2) {
 	$idMedico = $_SESSION['idUser'];
 }elseif ($_SESSION['rol']==3) {
 	$idEnfermera = $_SESSION['idUser'];
+}else {
+	$queryidmedico = mysqli_query($conection,"SELECT s.idseguimiento, s.idmedico
+	FROM seguimiento s
+	INNER JOIN medico m ON s.idmedico = m.idmedico");
+	while ($dataidmedico =mysqli_fetch_array($queryidmedico)) {
+		$idMedico = $dataidmedico["idmedico"];
+	}
+	$queryidenfermera = mysqli_query($conection,"SELECT s.idseguimiento, s.idenfermera
+	FROM seguimiento s
+	INNER JOIN enfermeras e ON s.idenfermera = e.idenfermeras");
+	while ($dataidenfermera =mysqli_fetch_array($queryidenfermera)) {
+		$idEnfermera = $dataidenfermera["idenfermera"];
+	}
+
 }
 ?>
 
@@ -72,19 +86,61 @@ if ($_SESSION['rol']==2) {
 			$desde = ($pagina-1) * $por_pagina;
 			$total_paginas = ceil($total_registro / $por_pagina);
 			
-			$query = mysqli_query($conection,"SELECT * FROM seguimiento  WHERE estatus=1 ORDER BY idseguimiento ASC LIMIT $desde, $por_pagina");
-			//whew para solo mostrar pacientes del medico en sesion actual
-			$query_paciente = mysqli_query($conection,"SELECT p.nombre, p.apellido_paterno, p.apellido_materno FROM pacientes p  INNER JOIN seguimiento s ON p.idpaciente=s.idpaciente WHERE s.idmedico=$idMedico;");
+			if ($_SESSION["rol"]==1) {
+				$query = mysqli_query($conection,"SELECT * FROM seguimiento  WHERE estatus=1 ORDER BY idseguimiento ASC LIMIT $desde, $por_pagina");
+			}else if ($_SESSION["rol"]==2) {
+				$query = mysqli_query($conection,"SELECT * FROM seguimiento  WHERE idmedico=$idMedico ORDER BY idseguimiento ASC LIMIT $desde, $por_pagina");
+			}else if($_SESSION["rol"]==3){
+				$query = mysqli_query($conection,"SELECT * FROM seguimiento  WHERE idenfermera=$idEnfermera ORDER BY idseguimiento ASC LIMIT $desde, $por_pagina");
+
+			}
+			
+			//where para solo mostrar pacientes del medico en sesion actual
+			if ($_SESSION["rol"]==2) {
+				$query_paciente = mysqli_query($conection,"SELECT p.nombre, p.apellido_paterno, p.apellido_materno FROM pacientes p  INNER JOIN seguimiento s ON p.idpaciente=s.idpaciente WHERE s.idmedico =$idMedico");
+				
 			$query_medico = mysqli_query($conection,"SELECT s.idmedico,u.nombre, u.apellido_paterno, u.apellido_materno
 			FROM seguimiento s
 			INNER JOIN medico m ON s.idmedico = m.idmedico
-			INNER JOIN usuario u ON m.idusuario = u.idusuario
-			WHERE s.idmedico = $idMedico;");
-
-			$query_enfermera = mysqli_query($conection,"SELECT s.idenfermera,u.nombre, u.apellido_paterno, u.apellido_materno
+			INNER JOIN usuario u ON m.idusuario = u.idusuario WHERE s.idmedico =$idMedico");
+			
+			$query_enfermera = mysqli_query($conection,"SELECT s.idmedico,s.idenfermera,u.nombre, u.apellido_paterno, u.apellido_materno
 			FROM seguimiento s
 			INNER JOIN enfermeras e ON s.idenfermera = e.idenfermeras
-			INNER JOIN usuario u ON e.idusuario = u.idusuario;");
+			INNER JOIN usuario u ON e.idusuario = u.idusuario WHERE idmedico =$idMedico");
+
+			}else if ($_SESSION["rol"]==3) {
+				$query_enfermera = mysqli_query($conection,"SELECT s.idenfermera,u.nombre, u.apellido_paterno, u.apellido_materno
+			FROM seguimiento s
+			INNER JOIN enfermeras e ON s.idenfermera = e.idenfermeras
+			INNER JOIN usuario u ON e.idusuario = u.idusuario
+			WHERE s.idenfermera = $idEnfermera;
+			");
+
+$query_paciente = mysqli_query($conection,"SELECT p.nombre, p.apellido_paterno, p.apellido_materno FROM pacientes p  INNER JOIN seguimiento s ON p.idpaciente=s.idpaciente WHERE s.idenfermera = $idEnfermera");
+			
+$query_medico = mysqli_query($conection,"SELECT s.idmedico,u.nombre, u.apellido_paterno, u.apellido_materno
+FROM seguimiento s
+INNER JOIN medico m ON s.idmedico = m.idmedico
+INNER JOIN usuario u ON m.idusuario = u.idusuario WHERE s.idenfermera =$idEnfermera");
+}elseif ($_SESSION["rol"]==1) {
+		$query_paciente = mysqli_query($conection,"SELECT p.nombre, p.apellido_paterno, p.apellido_materno FROM pacientes p  INNER JOIN seguimiento s ON p.idpaciente=s.idpaciente");
+		$query_medico = mysqli_query($conection,"SELECT s.idmedico,u.nombre, u.apellido_paterno, u.apellido_materno
+			FROM seguimiento s
+			INNER JOIN medico m ON s.idmedico = m.idmedico
+			INNER JOIN usuario u ON m.idusuario = u.idusuario");
+
+$query_enfermera = mysqli_query($conection,"SELECT s.idenfermera,u.nombre, u.apellido_paterno, u.apellido_materno
+FROM seguimiento s
+INNER JOIN enfermeras e ON s.idenfermera = e.idenfermeras
+INNER JOIN usuario u ON e.idusuario = u.idusuario");
+
+} 
+			
+			
+			
+
+			
 
 
 			$result = mysqli_num_rows($query);
@@ -122,7 +178,7 @@ if ($_SESSION['rol']==2) {
 					<td><?php echo $data3['idmedico'];?></td>
 					<td><?php echo (int)$data4['idenfermera']; ?></td>
                     <td><?php echo (int)$data5['idmedicamento']; ?></td>
-                    <td><?php echo (int)$data['estatus_seguimiento'] ?></td>
+                    <td><?php echo (int)$data['estatus'] ?></td>
                     
 					<td>
 						<a class="link_edit" href="editar_seguimiento.php?idseguimiento=<?php echo $data["idseguimiento"]; ?>"><i class="fa-solid fa-pen-to-square"></i> Editar</a>
