@@ -1,6 +1,7 @@
 <?php
+
 session_start();
-if($_SESSION['rol'] != 1 and $_SESSION['rol'] != 2 and $_SESSION['rol'] != 3 and $_SESSION['rol'] != 4)
+if($_SESSION['rol'] != 1 and $_SESSION['rol'] != 2)
 {
     header("location: ./");
 }
@@ -10,15 +11,18 @@ include "../conexion.php";
 if(!empty($_POST))
 {
     $alert='';
-    if(empty($_POST['paciente']) || empty($_POST['cantidad_embarazos']) || empty($_POST['cantidad_partos']) || empty($_POST['dilatacion'])|| empty($_POST['cantidad_abortos'])|| empty($_POST['amnios'])|| empty($_POST['borramiento'])|| empty($_POST['frecuencia_fetal'])|| empty($_POST['presion_arterial'])|| empty($_POST['urgencias'])|| empty($_POST['medico'])|| empty($_POST['enfermera'])|| empty($_POST['medicamentos'])|| empty($_POST['estatus_seguimiento']))
+    if ((empty(trim($_POST['idpaciente'])) || $_POST['cuantos_embarazos'] <= 0 || $_POST['cuantos_partos'] <= 0 ||
+    $_POST['cuantos_abortos'] < 0 || empty(trim($_POST['dilatacion'])) || empty(trim($_POST['amnios'])) ||
+    empty(trim($_POST['borramiento'])) || $_POST['frecuencia_fetal'] <= 0 || empty(trim($_POST['presion_arterial'])) ||
+    empty(trim($_POST['urgencias'])) || empty(trim($_POST['idmedico'])) || empty(trim($_POST['idenfermera'])) ||
+    empty(trim($_POST['idmedicamento'])) || empty(trim($_POST['estatus_seguimiento']))))
     {
-        // var_dump($_POST);
-        // print_r($_POST);
+      
         $alert='<p class="msg_error">Todos los campos son obligatorios.</p>';
         
     }else{
       
-        $idpaciente = $_POST['paciente'];
+        $idpaciente = $_POST['idpaciente'];
         $query = mysqli_query($conection, "SELECT COUNT(*)  AS count_seguimiento FROM seguimiento WHERE idpaciente = '$idpaciente' ");
         $result = mysqli_fetch_array($query);
         $count_seguimiento = $result['count_seguimiento'];
@@ -26,28 +30,31 @@ if(!empty($_POST))
             $alert='<p class="msg_error">El paciente ya tiene seguimiento</p>';
         }else{
 
-            $idpaciente = $_POST['paciente'];
-            $cuantos_embarazos = $_POST['cantidad_embarazos'];
-            $cuantos_partos = $_POST['cantidad_partos'];
-            $cuantos_abortos = $_POST['cantidad_abortos'];
+            $idpaciente = $_POST['idpaciente'];
+            $cuantos_embarazos = $_POST['cuantos_embarazos'];
+            $cuantos_partos = $_POST['cuantos_partos'];
+            $cuantos_abortos = $_POST['cuantos_abortos'];
             $dilatacion = $_POST['dilatacion'];
             $borramiento = $_POST['borramiento'];
             $amnios = $_POST['amnios'];
             $frecuencia_fetal = $_POST['frecuencia_fetal'];
             $presion_arterial = $_POST['presion_arterial'];
             $urgencias = $_POST['urgencias'];
-            $idmedicamento = $_POST['medicamentos'];
-            $idenfermera = $_POST['enfermera'];
-            $idmedico = $_POST['medico'];
-            $usuarioid = $_SESSION['idUser'];
+            $idmedicamento = $_POST['idmedicamento'];
+            $idenfermera = $_POST['idenfermera'];
+            $idmedico = $_POST['idmedico'];
+            $usuarioid = $_POST['idusuario'];
             $estatus_seguimiento = $_POST['estatus_seguimiento'];
 
             $query_insert = mysqli_query($conection,"INSERT INTO seguimiento(idpaciente,cuantos_embarazos,cuantos_partos,cuantos_abortos,dilatacion,borramiento,amnios,frecuencia_fetal,presion_arterial,urgencias,idmedicamento,idenfermera,idmedico,usuario_id,estatus_seguimiento)
-                VALUES('$idpaciente','$cuantos_embarazos','$cuantos_partos','$cuantos_abortos','$dilatacion','$borramiento','$amnios','$frecuencia_fetal','$presion_arterial','$urgencias','$idmedicamento','$idenfermera','$idmedico','$usuarioid','$estatus_seguimiento')");
-            if($query_insert){
+                VALUES($idpaciente,$cuantos_embarazos,$cuantos_partos,$cuantos_abortos,'$dilatacion','$borramiento','$amnios',$frecuencia_fetal,'$presion_arterial','$urgencias',$idmedicamento,$idenfermera,$idmedico,$usuarioid,'$estatus_seguimiento')");
+            if($query_insert && mysqli_affected_rows($conection) > 0){ 
+
+                echo "Consulta insert: $query_insert";
                 $alert='<p class="msg_save">Seguimiento creado correctamente.</p>';
             }else{
-                $alert='<p class="msg_error">Error al crear el seguimiento.</p>';
+                $alert='<p class="msg_error">Error al crear el seguimiento:'. mysqli_error($conection).'</p>';
+                var_dump($query_insert);
             }
         }
     }
@@ -71,16 +78,16 @@ if(!empty($_POST))
           <div class="alert"><?php echo isset($alert) ? $alert : '';?></div>
 
           <form action="" method="POST" >
-              
+              <input type="hidden" name="idusuario" value="<?php echo $_SESSION['idUser']?>">
           <label for="nombre_paciente">Nombre del paciente</label>
           <?php
           $query_paciente = mysqli_query($conection,"SELECT idpaciente, nombre,apellido_paterno,apellido_materno FROM pacientes");
           $result_paciente = mysqli_num_rows($query_paciente);
           ?>
-          <select name="paciente" id="nombre_paciente" required>
+          <select name="idpaciente" id="nombre_paciente" required>
         <?php
         if ($result_paciente>0) {
-            while ($pacientes = mysqli_fetch_array($query_paciente)) {
+            while ($pacientes = mysqli_fetch_assoc($query_paciente)) {
                 ?>
                 <option value="<?php echo $pacientes['idpaciente'];?>"><?php echo $pacientes['nombre'].' '.$pacientes['apellido_paterno'].' '.$pacientes['apellido_materno'] ?></option>
                 <?php
@@ -88,22 +95,22 @@ if(!empty($_POST))
         }
         ?>
           </select>
-              <label for="cantidad_embarazos">Cantidad de embarazos</label>
-              <input type="number" name="cantidad_embarazos" id="cantidad_embarazos" placeholder="Cantidad de embarazos" title="solo n&uacute;meros en cantidad de embarazos" pattern="[0-9]+"  min="1" required>
-              <label for="cantidad_partos">Cantidad de partos</label>
-              <input type="number" name="cantidad_partos" id="cantidad_partos" placeholder="Cantidad de partos" title="solo n&uacute;meros en cantidad de partos" pattern="[0-9]+"  min="1"  required>
-              <label for="cantidad_abortos">Cantidad de abortos</label>
-              <input type="number" name="cantidad_abortos" id="cantidad_abortos" placeholder="Cantidad de abortos"  pattern="[0-9]+" title="solo n&uacute;meros en cantidad de abortos" min="0" required>
+              <label for="cuantos_embarazos">Cantidad de embarazos</label>
+              <input type="number" name="cuantos_embarazos" id="cuantos_embarazos" placeholder="Cantidad de embarazos" title="solo n&uacute;meros en cantidad de embarazos" pattern="^[0-9]+$"  min="1" required>
+              <label for="cuantos_partos">Cantidad de partos</label>
+              <input type="number" name="cuantos_partos" id="cuantos_partos" placeholder="Cantidad de partos" title="solo n&uacute;meros en cantidad de partos" pattern="^[0-9]+$"  min="1"  required>
+              <label for="cuantos_abortos">Cantidad de abortos</label>
+              <input type="number" name="cuantos_abortos" id="cuantos_abortos" placeholder="Cantidad de abortos"  pattern="^[0-9]+$ title="solo n&uacute;meros en cantidad de abortos" min="0" required>
               <label for="dilatacion">Dilataci&oacute;n</label>
-              <input type="text" name="dilatacion" id="dilatacion" placeholder="Dilataci&oacute;n" pattern="[A-Za-z\d]+" title="solo letras en dilataci&oacute;n" required>
+              <input type="text" name="dilatacion" id="dilatacion" placeholder="Dilataci&oacute;n" pattern="^\d+cm$" title="solo letras en dilataci&oacute;n" required>
               <label for="borramiento">Borramiento</label>
-              <input type="text" name="borramiento" id="borramiento" pattern="^[0-9]+$"  placeholder="Borramiento" title="solo letras en borramiento" required>
+              <input type="text" name="borramiento" id="borramiento" pattern="^(100|[1-9][0-9]?|0)$"  placeholder="Borramiento" title="solo letras en numeros" required>
               <label for="amnios">Amnios</label>
-              <input type="text" name="amnios" id="amnios" placeholder="Amnios" pattern="[A-Za-z\s]+" title="solo letras en amnios" required>
+              <input type="text" name="amnios" id="amnios" placeholder="Amnios" pattern="^[A-Za-z\s]+$" title="solo letras en amnios" required>
               <label for="frecuencia_fetal">Frecuencia fetal</label>
-              <input type="text" name="frecuencia_fetal" id="frecuencia fetal" placeholder="Frecuencia fetal" pattern="^\d{1,3}\/\d{1,3}$+" title="solo n&&uacute;meros en frecuencia fetal"  min="1"  required> 
+              <input type="number" name="frecuencia_fetal" id="frecuencia_fetal" placeholder="Frecuencia fetal"  pattern="^\d{1,3}$" title="solo n&&uacute;meros en frecuencia fetal"  min="1"  required> 
               <label for="presion_arterial">Presi&oacute;n arterial</label>
-              <input type="text" name="presion_arterial" id="presion_arterial"  placeholder="Presi&oacute;n arterial" title="solo n&uacute;meros y / en presi&oacute;n arterial"  pattern="^\d{1,3}\/\d{1,3}$+" min="1"  required>
+              <input type="text" name="presion_arterial" id="presion_arterial"  placeholder="Presi&oacute;n arterial" title="solo n&uacute;meros y / en presi&oacute;n arterial"  pattern="^\d{1,3}\/\d{1,3}$" min="1"  required>
               <label for="urgencias">Urgencias</label>
               <input type="text" name="urgencias" id="urgencias" placeholder="Si ha tenido urgencias y su descripci&oacute;n"  pattern="^[A-Za-z0-9\s.]+$" title="Solo letras, espacios en  y numeros en urgencias" required>
               <label for="medico">Nombre del m&eacute;dico</label>
@@ -111,7 +118,7 @@ if(!empty($_POST))
                 $query_nombre_medico = mysqli_query($conection," SELECT u.idusuario, u.nombre, u.apellido_paterno, u.apellido_materno, m.idmedico FROM usuario u INNER JOIN medico m  ON u.idusuario = m.idusuario");
                 $result_nombre_medico = mysqli_num_rows($query_nombre_medico);
              ?>
-              <select name="medico" id="medico" required>
+              <select name="idmedico" id="medico" required>
                 <?php
                 if ($result_nombre_medico>0) {
                     while ($nombre = mysqli_fetch_array($query_nombre_medico)) {
@@ -128,7 +135,7 @@ if(!empty($_POST))
             $query_nombre_enfermera = mysqli_query($conection,"SELECT u.idusuario, u.nombre,u.apellido_paterno, u.apellido_materno, e.idenfermeras FROM usuario u INNER JOIN enfermeras e ON u.idusuario = e.idusuario");
             $result_nombre_enfermera = mysqli_num_rows($query_nombre_enfermera);
             ?>
-        <select name="enfermera" id="enfermera" required>
+        <select name="idenfermera" id="enfermera" required>
             <?php
             if ($result_nombre_enfermera>0) {
                 while ($nombre = mysqli_fetch_array($query_nombre_enfermera)) {
@@ -144,7 +151,7 @@ if(!empty($_POST))
              $query_medicamentos = mysqli_query($conection,"SELECT idmedicamento, nombre_medicamento FROM medicamentos");
              $result_medicamentos = mysqli_num_rows($query_medicamentos);
              ?>
-             <select name="medicamentos" id="medicamentos" required>
+             <select name="idmedicamento" id="medicamentos" required>
                 <?php
                 if ($result_medicamentos>0) {
                     while ($medicamentos = mysqli_fetch_array($query_medicamentos)) {
@@ -157,7 +164,7 @@ if(!empty($_POST))
                 ?>
              </select>
             <label for="estatus_seguimiento">Estatus del seguimiento</label>
-            <input type="text" name="estatus_seguimiento" id="estatus_seguimiento" placeholder="Estatus del seguimiento"  pattern="[A-Za-z\s]+" title="Solo letras, comas  y espacios en blanco para estatus del seguimiento" required>
+            <input type="text" name="estatus_seguimiento" id="estatus_seguimiento" placeholder="Estatus del seguimiento" required>
               <button type="submit" class="btn-save"><i class="fa-solid fa-floppy-disk"></i>Crear Seguimiento</button>
           </form>
           <a href="javascript: history.go(-1)" >Volver Atr&aacute;s</a>
