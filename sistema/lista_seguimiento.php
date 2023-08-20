@@ -56,6 +56,7 @@ if ($_SESSION['rol']==2) {
 				<th>Nombre del paciente</th>
 				<th>Cuantos embarazos</th>
 				<th>Cuantos partos</th>
+				<th>Cuantas cesareas</th>
 				<th>Cuantos abortos</th>
 				<th>Dilatacion</th>
 				<th>Borramiento</th>
@@ -168,6 +169,7 @@ INNER JOIN usuario u ON e.idusuario = u.idusuario");
 					<td><?php echo $data2["nombre"]." ".$data2["apellido_paterno"]." ".$data2["apellido_materno"]; ?></td>
 					<td><?php echo (int)$data["cuantos_embarazos"]; ?></td>
 					<td><?php echo (int)$data["cuantos_partos"]; ?></td>
+					<td><?php echo (int)$data["cuantas_cesareas"];?></td>
 					<td><?php echo (int)$data["cuantos_abortos"]; ?></td>
 					<td><?php echo $data["dilatacion"]; ?></td>
 					<td><?php echo $data["borramiento"]; ?></td>

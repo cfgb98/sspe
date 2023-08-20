@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 14-07-2023 a las 03:37:38
+-- Tiempo de generación: 20-08-2023 a las 22:20:16
 -- Versión del servidor: 10.4.28-MariaDB
--- Versión de PHP: 8.0.28
+-- Versión de PHP: 8.2.4
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -30,9 +30,16 @@ SET time_zone = "+00:00";
 CREATE TABLE `enfermeras` (
   `idenfermeras` int(11) NOT NULL,
   `estatus_enfermera` varchar(12) NOT NULL,
-  `estatus` tinyint(1) NOT NULL DEFAULT 1,
   `idusuario` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `enfermeras`
+--
+
+INSERT INTO `enfermeras` (`idenfermeras`, `estatus_enfermera`, `idusuario`) VALUES
+(1, 'Registro', 4),
+(2, 'Registro', 6);
 
 -- --------------------------------------------------------
 
@@ -42,7 +49,7 @@ CREATE TABLE `enfermeras` (
 
 CREATE TABLE `medicamentos` (
   `idmedicamento` int(11) NOT NULL,
-  `folio` int(20) NOT NULL,
+  `folio` int(11) NOT NULL,
   `nombre_medicamento` varchar(50) NOT NULL,
   `via_administracion` varchar(50) NOT NULL,
   `observaciones` varchar(50) NOT NULL,
@@ -50,6 +57,14 @@ CREATE TABLE `medicamentos` (
   `usuario_id` int(11) NOT NULL,
   `estatus` tinyint(1) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `medicamentos`
+--
+
+INSERT INTO `medicamentos` (`idmedicamento`, `folio`, `nombre_medicamento`, `via_administracion`, `observaciones`, `fecha_caducidad`, `usuario_id`, `estatus`) VALUES
+(1, 1234567, 'Acido folico', 'Oral', 'Una tableta cada 24 horas', '2024-10-29', 5, 1),
+(2, 234567, 'materna-vitaminas', 'Oral', '1 tableta cada 12 horas', '2024-10-29', 1, 1);
 
 -- --------------------------------------------------------
 
@@ -60,9 +75,17 @@ CREATE TABLE `medicamentos` (
 CREATE TABLE `medico` (
   `idmedico` int(11) NOT NULL,
   `estatus_medico` varchar(20) NOT NULL,
-  `estatus` tinyint(1) NOT NULL DEFAULT 1,
+  `estatus` int(11) NOT NULL DEFAULT 1,
   `idusuario` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `medico`
+--
+
+INSERT INTO `medico` (`idmedico`, `estatus_medico`, `estatus`, `idusuario`) VALUES
+(1, 'Registro', 1, 2),
+(2, 'Registro', 1, 3);
 
 -- --------------------------------------------------------
 
@@ -72,12 +95,15 @@ CREATE TABLE `medico` (
 
 CREATE TABLE `pacientes` (
   `idpaciente` int(11) NOT NULL,
+  `nombre` varchar(50) NOT NULL,
+  `apellido_paterno` varchar(50) NOT NULL,
+  `apellido_materno` varchar(50) NOT NULL,
   `hora` time NOT NULL,
   `curp` varchar(50) NOT NULL,
   `fecha_nacimiento` date NOT NULL,
   `domicilio` varchar(50) NOT NULL,
   `telefono` varchar(20) NOT NULL,
-  `cod_postal` int(5) NOT NULL,
+  `cod_postal` int(11) NOT NULL,
   `estatus_paciente` varchar(50) NOT NULL,
   `estatus` tinyint(1) NOT NULL DEFAULT 1,
   `idusuario` int(11) NOT NULL
@@ -87,8 +113,9 @@ CREATE TABLE `pacientes` (
 -- Volcado de datos para la tabla `pacientes`
 --
 
-INSERT INTO `pacientes` (`idpaciente`, `hora`, `curp`, `fecha_nacimiento`, `domicilio`, `telefono`, `cod_postal`, `estatus_paciente`, `estatus`, `idusuario`) VALUES
-(1, '13:11:00', 'FORM4971209MJCLRL00', '1997-12-09', 'manuel cano 50 col. silos el salto', '331023456', 45190, 'registro', 1, 1);
+INSERT INTO `pacientes` (`idpaciente`, `nombre`, `apellido_paterno`, `apellido_materno`, `hora`, `curp`, `fecha_nacimiento`, `domicilio`, `telefono`, `cod_postal`, `estatus_paciente`, `estatus`, `idusuario`) VALUES
+(1, 'Miriam', 'Mojica', 'Borquez', '19:54:00', 'MOBM270280MJCRNR06', '1980-02-27', 'A la Explanada 125', '36737352', 45020, 'Registro', 1, 1),
+(2, 'Irma', 'Bernabe', 'Sanchez', '16:24:00', 'BESI670725MJCRN06', '1967-07-25', 'Al Arroyo 212', '36737958', 45020, 'Registro', 1, 5);
 
 -- --------------------------------------------------------
 
@@ -119,13 +146,14 @@ INSERT INTO `rol` (`idrol`, `rol`) VALUES
 CREATE TABLE `seguimiento` (
   `idseguimiento` int(11) NOT NULL,
   `idpaciente` int(11) NOT NULL,
-  `cuantos_embarazos` tinyint(2) NOT NULL,
-  `cuantos_partos` tinyint(2) NOT NULL,
-  `cuantos_abortos` tinyint(2) NOT NULL,
+  `cuantos_embarazos` tinyint(4) NOT NULL,
+  `cuantos_partos` tinyint(4) NOT NULL,
+  `cuantas_cesareas` tinyint(4) NOT NULL,
+  `cuantos_abortos` tinyint(4) NOT NULL,
   `dilatacion` text NOT NULL,
   `borramiento` varchar(20) NOT NULL,
   `amnios` varchar(12) NOT NULL,
-  `frecuencia_fatal` int(12) NOT NULL,
+  `frecuencia_fetal` text DEFAULT NULL,
   `presion_arterial` text NOT NULL,
   `urgencias` varchar(20) NOT NULL,
   `idmedicamento` int(11) NOT NULL,
@@ -135,6 +163,14 @@ CREATE TABLE `seguimiento` (
   `estatus_seguimiento` varchar(20) NOT NULL,
   `estatus` tinyint(1) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `seguimiento`
+--
+
+INSERT INTO `seguimiento` (`idseguimiento`, `idpaciente`, `cuantos_embarazos`, `cuantos_partos`, `cuantas_cesareas`, `cuantos_abortos`, `dilatacion`, `borramiento`, `amnios`, `frecuencia_fetal`, `presion_arterial`, `urgencias`, `idmedicamento`, `idenfermera`, `idmedico`, `usuario_id`, `estatus_seguimiento`, `estatus`) VALUES
+(1, 1, 2, 1, 0, 1, '10cm', '100', 'Normales', '120', '120/80', 'Ninguna', 1, 1, 1, 1, 'Registro', 1),
+(2, 2, 1, 1, 0, 0, '10cm', '100', 'normales', '140', '120/80', 'No', 2, 2, 2, 5, 'Registro', 1);
 
 -- --------------------------------------------------------
 
@@ -156,24 +192,28 @@ CREATE TABLE `seguimiento_medicamento` (
 
 CREATE TABLE `usuario` (
   `idusuario` int(11) NOT NULL,
-  `apellido_paterno` varchar(50) NOT NULL,
-  `apellido_materno` varchar(50) NOT NULL,
-  `nombre` varchar(50) NOT NULL,
-  `cedula` tinyint(50) NOT NULL,
   `correo` varchar(50) NOT NULL,
   `usuario` varchar(20) NOT NULL,
   `clave` varchar(50) NOT NULL,
   `rol` int(11) NOT NULL,
-  `estatus` int(11) NOT NULL DEFAULT 1
+  `estatus` int(11) NOT NULL DEFAULT 1,
+  `nombre` varchar(50) DEFAULT NULL,
+  `apellido_paterno` varchar(50) DEFAULT NULL,
+  `apellido_materno` varchar(50) DEFAULT NULL,
+  `cedula` tinyint(4) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `usuario`
 --
 
-INSERT INTO `usuario` (`idusuario`, `apellido_paterno`, `apellido_materno`, `nombre`, `cedula`, `correo`, `usuario`, `clave`, `rol`, `estatus`) VALUES
-(1, 'romero', 'ascencio', 'jose', 12, 'jara148630@gmail.com', 'admin', '4aa62acb5d04020d3b8ce28ab23d7149', 1, 1),
-(2, 'lopez', 'gomez', 'roberto', 23, 'ingalamromerj2323@gmail.com', 'prueba', '202cb962ac59075b964b07152d234b70', 2, 1);
+INSERT INTO `usuario` (`idusuario`, `correo`, `usuario`, `clave`, `rol`, `estatus`, `nombre`, `apellido_paterno`, `apellido_materno`, `cedula`) VALUES
+(1, 'jara148630@gmail.com', 'admin', '4aa62acb5d04020d3b8ce28ab23d7149', 1, 1, 'José Alan', 'Romero', 'Ascencio', 127),
+(2, 'dr.palafox_daniel@gmail.com', 'drPFDa', '25f9e794323b453885f5181f1b624d0b', 2, 1, 'Daniel', 'Palafox', 'Fernandez', 125),
+(3, 'dr_acosta.borrayo_jorge@gmail.com', 'drABJ', 'acbd9ab2f68bea3f5291f825416546a1', 2, 1, 'Jorge', 'Acosta', 'Borrayo', 50),
+(4, 'mirsa.andrea@outlook.com', 'mirsa', '2015da9b126b064a3c14369388c0df31', 3, 1, 'Andrea', 'Miranda', 'Sainz', 20),
+(5, 'crisadmin@hotmail.com', 'admincrisg', '82bfd8436e440d9aefce43696d5fc7ed', 1, 1, 'Cristian Fernando', 'Garcia', 'Bernabe', 10),
+(6, 'hector_rs@hotmail.com', 'enrs', '3788944cdc2dc9bed241e4d0450dbe4a', 3, 1, 'Hector', 'Rodriguez', 'Silva', 30);
 
 --
 -- Índices para tablas volcadas
@@ -247,25 +287,25 @@ ALTER TABLE `usuario`
 -- AUTO_INCREMENT de la tabla `enfermeras`
 --
 ALTER TABLE `enfermeras`
-  MODIFY `idenfermeras` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `idenfermeras` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT de la tabla `medicamentos`
 --
 ALTER TABLE `medicamentos`
-  MODIFY `idmedicamento` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `idmedicamento` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT de la tabla `medico`
 --
 ALTER TABLE `medico`
-  MODIFY `idmedico` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `idmedico` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT de la tabla `pacientes`
 --
 ALTER TABLE `pacientes`
-  MODIFY `idpaciente` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `idpaciente` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT de la tabla `rol`
@@ -277,7 +317,7 @@ ALTER TABLE `rol`
 -- AUTO_INCREMENT de la tabla `seguimiento`
 --
 ALTER TABLE `seguimiento`
-  MODIFY `idseguimiento` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `idseguimiento` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT de la tabla `seguimiento_medicamento`
@@ -289,7 +329,7 @@ ALTER TABLE `seguimiento_medicamento`
 -- AUTO_INCREMENT de la tabla `usuario`
 --
 ALTER TABLE `usuario`
-  MODIFY `idusuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `idusuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- Restricciones para tablas volcadas

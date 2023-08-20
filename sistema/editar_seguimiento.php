@@ -23,6 +23,7 @@ if(!empty($_POST))
         $idpaciente = $_POST['idpaciente'];
         $cuantos_embarazos = $_POST['cuantos_embarazos'];
         $cuantos_partos = $_POST['cuantos_partos'];
+        $cuantas_cesareas = $_POST['cuantas_cesareas'];
         $cuantos_abortos = $_POST['cuantos_abortos'];
         $dilatacion = $_POST['dilatacion'];
         $borramiento = $_POST['borramiento'];
@@ -71,6 +72,7 @@ if(empty($_REQUEST['idseguimiento']))
         $idpaciente = $data['idpaciente'];
         $cuantos_embarazos =$data['cuantos_embarazos'];
         $cuantos_partos = $data['cuantos_partos'];
+        $cuantas_cesareas = $data['cuantas_cesareas'];
         $cuantos_abortos = $data['cuantos_abortos'];
         $dilatacion = $data['dilatacion'];
         $borramiento = $data['borramiento'];
@@ -129,6 +131,8 @@ if(empty($_REQUEST['idseguimiento']))
               <input type="number" name="cuantos_embarazos" id="cantidad_embarazos" placeholder="" title="solo n&uacute;meros en cantidad de embarazos" pattern="[0-9]+"  min="1"  value="<?php echo  $cuantos_embarazos?>" required>
               <label for="cantidad_partos">Cantidad de partos</label>
               <input type="number" name="cuantos_partos" id="cantidad_partos" placeholder="" title="solo n&uacute;meros en cantidad de partos" pattern="[0-9]+"  min="1"   value="<?php echo $cuantos_partos?>" required>
+              <label for="cuantas_cesareas">Cuantas Cesareas</label>
+              <input type="number" name="cuantas_cesareas" id="cuantas_cesareas" placeholder="" title="Solo n&uacute;meros en cantidad de cesareas" pattern="[0-9]+" value="<?php echo $cuantas_cesareas?>" required>
               <label for="cantidad_abortos">Cantidad de abortos</label>
               <input type="number" name="cuantos_abortos" id="cantidad_abortos" placeholder=""  pattern="[0-9]+" title="solo n&uacute;meros en cantidad de abortos" min="0"  value="<?php echo $cuantos_abortos?>" required>
               <label for="dilatacion">Dilataci&oacute;n</label>
