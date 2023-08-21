@@ -85,24 +85,44 @@ if ($_SESSION['rol']==2) {
 				WHERE estatus = 1 ORDER BY idpaciente ASC LIMIT $desde,$por_pagina 
 			  ");
 			}elseif ($_SESSION["rol"]==2) {
-				$query = mysqli_query($conection,"SELECT p.* FROM pacientes p
+				$query = "SELECT p.* FROM pacientes p
 			 INNER JOIN seguimiento s ON p.idpaciente = s.idpaciente
-                WHERE s.idmedico = $idMedico AND p.estatus = 1 ORDER BY idpaciente ASC LIMIT $desde,$por_pagina 
-			  ");
+             WHERE s.idmedico = ? AND p.estatus = 1 ORDER BY idpaciente ASC LIMIT $desde,$por_pagina";
+				  $stmt = mysqli_prepare($conection, $query);
+
+				  if ($stmt) {
+					mysqli_stmt_bind_param($stmt, "i", $idMedico);
+					mysqli_stmt_execute($stmt);
+					$result = mysqli_stmt_get_result($stmt);
+                $rows = mysqli_num_rows($result);
+                mysqli_stmt_close($stmt);
+				  }
+
+
 			}elseif ($_SESSION["rol"]==3) {
 				$query = mysqli_query($conection,"SELECT p.* FROM pacientes p
 			 INNER JOIN seguimiento s ON p.idpaciente = s.idpaciente
-                WHERE s.idenfermera = $idEnfermera AND p.estatus = 1 ORDER BY idpaciente ASC LIMIT $desde,$por_pagina 
+                WHERE s.idenfermera = ? AND p.estatus = 1 ORDER BY idpaciente ASC LIMIT $desde,$por_pagina 
 			  ");
-			}
+
+$stmt = mysqli_prepare($conection, $query);
+
+if ($stmt) {
+  mysqli_stmt_bind_param($stmt, "i", $idMedico);
+  mysqli_stmt_execute($stmt);
+  $result = mysqli_stmt_get_result($stmt);
+$rows = mysqli_num_rows($result);
+mysqli_stmt_close($stmt);
+}
+}
 			
  
 			mysqli_close($conection);
 
-			$result = mysqli_num_rows($query);
-			if($result > 0){
+			$rows = mysqli_num_rows($result);
+			if($rows > 0){
 
-				while ($data = mysqli_fetch_array($query)) {
+				while ($data = mysqli_fetch_array($result)) {
 		
 			?>
 				<tr>

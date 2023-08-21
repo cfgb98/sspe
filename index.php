@@ -18,13 +18,20 @@ if(!empty($_SESSION['active']))
             $user = mysqli_real_escape_string($conection, $_POST['usuario']);
             $pass = md5(mysqli_real_escape_string($conection,$_POST['clave']));
 
-            $query = mysqli_query($conection,"SELECT * FROM usuario WHERE usuario= '$user' AND clave = '$pass'");
-            mysqli_close($conection);
-            $result = mysqli_num_rows($query);
+            $query = "SELECT * FROM usuario WHERE usuario = ? AND clave = ?";
+            $stmt = mysqli_prepare($conection, $query);
+            
+            if ($stmt) {
+                mysqli_stmt_bind_param($stmt, "ss", $user, $pass);
+                mysqli_stmt_execute($stmt);
+                
+                $result = mysqli_stmt_get_result($stmt);
+                $rows = mysqli_num_rows($result);
+                mysqli_stmt_close($stmt);
 
-            if($result > 0)
+            if($rows  > 0)
             {
-                $data = mysqli_fetch_array($query);
+                $data = mysqli_fetch_array($result);
                 $_SESSION['active'] = true;
                 $_SESSION['idUser'] = $data['idusuario'];
                 $_SESSION['nombre'] = $data['nombre'];
@@ -37,6 +44,11 @@ if(!empty($_SESSION['active']))
                 $alert = 'El Usuario o la clave son incorrectos';
                 session_destroy();
             }
+               
+            }
+            mysqli_close($conection);
+          
+
         }
     }
 }
