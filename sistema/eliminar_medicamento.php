@@ -1,6 +1,6 @@
 <?php 
     session_start();
-    if($_SESSION['rol'] != 1 and $_SESSION['rol'] !=2 and $_SESSION['rol'] != 3 and $_SESSION['rol'] != 4)
+    if($_SESSION['rol'] != 1 )
     {
         header("location: ./");
     }
@@ -9,15 +9,10 @@
 
 	if(!empty($_POST))
 	{
-		if(empty($_POST['idmedicamento'])){
-			header("location: lista_medicamento.php");
-			mysqli_close($conection);
-		}
+		
 		$idmedicamento = $_POST['idmedicamento'];
 
-        //Para eliminar un registro en la base de datos
-		//$query_delete = mysqli_query($conection,"DELETE FROM usuario WHERE idusuario =$idusuario");
-        $query_delete = mysqli_query($conection,"UPDATE medicamentos SET estatus = 0 WHERE idmedicamento = $idmedicamento ");
+        $query_delete = mysqli_query($conection,"UPDATE medicamentos SET estatus = 0 WHERE idmedicamento = '$idmedicamento'");
 
 		if($query_delete){
 			header("location: lista_medicamento.php");
@@ -26,22 +21,27 @@
 		}
 	}
 
-    if(empty($_REQUEST['id']))
+    if(empty($_REQUEST['idmedicamento']) )
 	{
 		header("location: lista_medicamento.php");
 		mysqli_close($conection);
 	}else{
-		$idmedicamento = $_REQUEST['id'];
+		$idmedicamento = $_REQUEST['idmedicamento'];
 
-		$query = mysqli_query($conection,"SELECT * FROM medicamentos  WHERE idmedicamento = $idmedicamento ");										
+		$query = mysqli_query($conection, "SELECT * FROM medicamentos WHERE idmedicamento = '$idmedicamento'");
+
 		mysqli_close($conection);										 
 	    $result = mysqli_num_rows($query);
 
 		if($result > 0){
 			while($data = mysqli_fetch_array($query)){
-                
-                $folio     = $data['folio'];
-				$nombre_medicamento = $data['nombre_medicamento'];
+
+                $idmedicamento      = $data['idmedicamento'];
+                $folio              =$data['folio'];
+                $nombre           = $data['nombre_medicamento'];
+                $via_administracion = $data['via_administracion'];
+                $observaciones = $data['observaciones'];
+                $fecha_caducidad = $data['fecha_caducidad'];
 			}
 		}else{
 			header("location: lista_medicamento.php");
@@ -63,10 +63,13 @@
 		    <i class="fa-solid fa-user-xmark fa-7x" style="color: red"></i>
 		   <br>
 		   <br>
-           <h2>¿Está seguro de eliminar el Siguiente Medicamento?</h2>
-		   <p>Folio: <span><?php echo $folio; ?></span></p>
-           <p>Nombre del Medicamento: <span><?php echo $nombre_medicamento; ?></span></p>
-		   
+           <h2>¿Está seguro de eliminar el siguiente registro?</h2>
+           <p>Folio: <span><?php echo $folio; ?></span></p>
+		   <p>Nombre: <span><?php echo $nombre; ?></span></p>
+           <p>V&iacute;a de admnistraci&oacute;n: <span><?php echo $via_administracion; ?></span></p>
+           <p>Obseraciones: <span><?php echo $observaciones; ?></span></p>
+		   <p>Fecha de caducidad: <span><?php echo $fecha_caducidad; ?></span></p>
+
 		   <form method="POST" action="">
 			   <input type="hidden"name="idmedicamento" value="<?php echo $idmedicamento; ?>">
 			   <a href="lista_medicamento.php" class="btn_cancel"><i class="fa-solid fa-ban"></i> Cancelar</a>

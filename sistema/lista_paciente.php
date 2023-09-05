@@ -1,6 +1,6 @@
 <?php 
    session_start();
-   if($_SESSION['rol'] != 1 and $_SESSION['rol'] != 2 and $_SESSION['rol'] != 3)
+   if($_SESSION['rol'] != 1 and $_SESSION['rol'] != 2)
     {
         header("location: ./");
     }
@@ -13,16 +13,16 @@
 <head>
 	<meta charset="UTF-8">
 	<?php include "includes/scripts.php"; ?>
-	<title>Lista de Medicamentos</title>
+	<title>Lista de Pacientes Embarazadas</title>
 </head>
 <body>
 	<?php include "includes/header.php"; ?>
 	<section id="container">
 		
-		<h1>Lista de Medicamentos</h1>
-		<a href="registro_medicamento.php" class="btn_new"><i class="fa-solid fa-file-circle-plus"></i>Ingresar Medicamento</a>
-		<a href="reporte_medicamentos.php" class="btn_new"><i class="fa-solid fa-floppy-disk"></i>Guardar reporte</a>
-		<form action="buscar_medicamento.php" method="get" class="form_search">
+		<h1>Lista de Pacientes Embarazadas</h1>
+		<a href="registro_paciente.php" class="btn_new"><i class="fa-solid fa-file-circle-plus"></i>Ingresar Paciente</a>
+		
+		<form action="buscar_entrada.php" method="get" class="form_search">
 			<input type="text" name="busqueda" id="busqueda" placeholder="Buscar">
 			<input type="submit" value="Buscar" class="btn_search">
 		</form>
@@ -30,18 +30,22 @@
 		<table>
 			<tr>
 				<th>ID</th>
-                <th>Folio</th>
-				<th>Nombre del Medicamento</th>
-				<th>Via de Administracion</th>
-				<th>Observaciones</th>
-				<th>Fecha de Caducidad</th>
+                <th>Nombre</th>
+				<th>Edad</th>
+				<th>Telefono</th>
+				<th>CURP</th>
+				<th>Domicilio</th>
+                <th>Fecha</th>
+				<th>Medico Tratante</th>
+				<th>Medicamento</th>
+				<th>Hora</th>
 				<th>Acciones</th>
 			</tr>
 		<?php 
 			//Paginador
-			$sql_registe = mysqli_query($conection,"SELECT COUNT(*) as total_registro FROM medicamentos WHERE estatus = 1 ");
+			$sql_registe = mysqli_query($conection,"SELECT COUNT(*) as total_registro FROM pacientes WHERE estatus = 1 ");
 			$result_register = mysqli_fetch_array($sql_registe);
-			$total_registro = $result_register['total_registro'];       
+			$total_registro = $result_register['total_registro'];
 
 			$por_pagina = 10;
 
@@ -55,10 +59,13 @@
 			$desde = ($pagina-1) * $por_pagina;
 			$total_paginas = ceil($total_registro / $por_pagina);
 
-			$query = mysqli_query($conection,"SELECT * FROM medicamentos 
-			                                   WHERE estatus = 1 ORDER BY idmedicamento ASC LIMIT $desde,$por_pagina 
-                                             ");
- 
+            $query = mysqli_query($conection,"SELECT p.codpaciente,p.clave,p.cantidad,p.nodelote,r.material 
+                                                FROM entradas e
+                                                INNER JOIN material r
+                                                ON e.material = r.codmaterial  
+                                                WHERE e.estatus = 1 ORDER BY e.codentrada ASC LIMIT $desde,$por_pagina 
+                                                ");
+
 			mysqli_close($conection);
 
 			$result = mysqli_num_rows($query);
@@ -68,16 +75,15 @@
 		
 			?>
 				<tr>
-					<td><?php echo $data["idmedicamento"]; ?></td>
-					<td><?php echo $data["folio"]; ?></td>
-					<td><?php echo $data["nombre_medicamento"]; ?></td>
-				    <td><?php echo $data["via_administracion"]; ?></td>
-					<td><?php echo $data["observaciones"]; ?></td>
-					<td><?php echo $data["fecha_caducidad"]; ?></td>
+					<td><?php echo $data["codentrada"]; ?></td>
+				    <td><?php echo $data["clave"]; ?></td>
+					<td><?php echo $data["cantidad"]; ?></td>
+					<td><?php echo $data["nodelote"]; ?></td>
+					<td><?php echo $data["material"]; ?></td>
 					<td>
-						<a class="link_edit" href="editar_medicamento.php?idmedicamento=<?php echo $data["idmedicamento"]; ?>"><i class="fa-solid fa-pen-to-square"></i> Editar</a>
+						<a class="link_edit" href="editar_paciente.php?id=<?php echo $data["codpaciente"]; ?>"><i class="fa-solid fa-pen-to-square"></i> Editar</a>
                          |
-						<a class="link_delete" href="eliminar_medicamento.php?idmedicamento=<?php echo $data["idmedicamento"]; ?>"><i class="fa-solid fa-trash-can"></i> Eliminar</a>
+						<a class="link_delete" href="eliminar_paciente.php?id=<?php echo $data["codpaciente"]; ?>"><i class="fa-solid fa-trash-can"></i> Eliminar</a>
 					</td>
 				</tr>
 			

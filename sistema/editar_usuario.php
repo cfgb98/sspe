@@ -11,7 +11,7 @@
 	if(!empty($_POST))
 	{
 		$alert='';
-		if( empty($_POST['correo']) || empty($_POST['usuario'])  || empty($_POST['rol']))
+		if( empty($_POST['correo']) || empty($_POST['usuario'])  || empty($_POST['rol']) || empty($_POST['cedula'])|| empty($_POST['clave']))
 		{
 			$alert='<p class="msg_error">Todos los campos son obligatorios.</p>';
 		}else{
@@ -84,7 +84,6 @@
 	}else{
 		$option = '';
 		while ($data = mysqli_fetch_array($sql)) {
-			# code...
 			$iduser            = $data['idusuario'];
 			$apellido_paterno  = $data['apellido_paterno'];
 			$apellido_materno  = $data['apellido_materno'];

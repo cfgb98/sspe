@@ -1,6 +1,6 @@
 <?php 
     session_start();
-    if ($_SESSION['rol'] != 1 && $_SESSION['rol'] != 2 && $_SESSION['rol'] != 3 && $_SESSION['rol'] != 4) {
+    if ($_SESSION['rol'] != 1 && $_SESSION['rol'] != 2 && $_SESSION['rol'] != 3) {
         header("location: ./");
     }
     include "../conexion.php";
@@ -64,8 +64,6 @@
     <?php include "includes/header.php"; ?>
     <section id="container">
         <h1>Lista de seguimientos</h1>
-        <a href="registro_seguimiento.php" class="btn_new"><i class="fa-solid fa-file-circle-plus"></i> Ingresar Medicamento</a>
-        <a href="reporte_busqueda_seguimiento.php?busqueda=<?php echo $busqueda?>" class="btn_new"><i class="fa-regular fa-file-pdf"></i> Descargar PDF</a>
         
         <form action="buscar_seguimiento.php" method="get" class="form_search">
             <input type="text" name="busqueda" id="busqueda" placeholder="Buscar" value="<?php echo $busqueda; ?>">

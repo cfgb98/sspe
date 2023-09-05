@@ -1,30 +1,32 @@
+
 <?php
-    session_start();
-    if($_SESSION['rol'] != 1 and $_SESSION['rol'] != 2 and $_SESSION['rol'] != 3 and $_SESSION['rol'] != 4)
-    {
-        header("location: ./");
-    }
+session_start();
+if($_SESSION['rol'] != 1)
+{
+header("location: ./");
+}
 
-    include "../conexion.php";
+include "../conexion.php";
 
-    if(!empty($_POST))
+
+if(!empty($_POST))
     {
         $alert='';
-        if(empty($_POST['folio']) || empty($_POST['nombre_medicamento']))
+        if(empty($_POST['folio']) || empty($_POST['nombre']) || empty($_POST['via'])|| empty($_POST['observaciones'] || empty($_POST['caducidad'])))
         {
             $alert='<p class="msg_error">Todos los campos son obligatorios.</p>';
         }else{
           
+           
+            $folio= $_POST['folio'];
+            $nombre = $_POST['nombre'];
+            $via = $_POST['via'];
+            $observaciones = $_POST['observaciones'];
+            $caducidad          = $_POST['caducidad'];
+            $idusuario        = $_SESSION['idUser'];
 
-            $folio              = $_POST['folio'];
-            $nombre_medicamento = $_POST['nombre_medicamento'];
-            $via_administracion = $_POST['via_administracion'];
-            $observaciones      = $_POST['observaciones'];
-            $fecha_caducidad    = $_POST['fecha_caducidad'];
-            $usuario_id         = $_SESSION['idUser'];
-
-                $query_insert = mysqli_query($conection,"INSERT INTO medicamentos(folio,nombre_medicamento,via_administracion,observaciones,fecha_caducidad,usuario_id)
-                                                         VALUES('$folio','$nombre_medicamento','$via_administracion','$observaciones','$fecha_caducidad','$usuario_id')");
+        $query_insert = mysqli_query($conection,"INSERT INTO medicamentos(folio,nombre_medicamento,via_administracion,observaciones,fecha_caducidad,usuario_id)
+                                                         VALUES('$folio','$nombre','$via','$observaciones','$caducidad','$idusuario')");
 
 
                 if($query_insert){
@@ -35,41 +37,41 @@
         }
         mysqli_close($conection);
     }
-
 ?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="UTF-8">
-	<?php include "includes/scripts.php"?>
-	<title>Registro De Medicamentos</title>
+    <meta charset="UTF-8">
+    <?php include "includes/scripts.php"; ?>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de medicamentos</title>
 </head>
 <body>
-    <?php include "includes/header.php";?>
-	<section id="container">
-	       
-          <div class="form_register">
-              <h1><i class="fa-solid fa-user-plus"></i> Registro De Mediamentos</h1>
-              <hr>
-              <div class="alert"><?php echo isset($alert) ? $alert : '';?></div>
+<?php include "includes/header.php"; ?>
+<section id="container">
+		
+		<div class="form_register">
+			<h1>Registro de medicamentos</h1>
+			<hr>
+			<div class="alert"><?php echo isset($alert) ? $alert : ''; ?></div>
 
-              <form action="" method="POST" >
+            <form action="" method="POST" >
                   <label for="folio">Folio</label>
-                  <input type="number" name="folio" id="folio" placeholder="Numero de Folio">
-                  <label for="nombre_medicamento">Nombre del Medicamento</label>
-                  <input type="text" name="nombre_medicamento" id="nombre_medicamento" placeholder="Nombre del Medicamento">
-                  <label for="via_administracion">Via de Administracion</label>
-                  <input type="text" name="via_administracion" id="via_administracion" placeholder="Via de Administracion">
+                  <input type="text" id="folio" name="folio" placeholder="folio" required>
+                  <label for="nombre">Nombre</label>
+                  <input type="text" id="nombre" name="nombre" placeholder="nombre" required>
+                  <label for="via">Via de administraci&oacute;n</label>
+                  <input type="text" id="via" name="via" placeholder="via de administraci&oacute;n" required>
                   <label for="observaciones">Observaciones</label>
-                  <input type="text" name="observaciones" id="observaciones" placeholder="Observaciones">
-                  <label for="fecha_caducidad">fecha de Caducidad</label>
-                  <input type="date" name="fecha_caducidad" id="fecha_caducidad" placeholder="">
-                 
-                 <button type="submit" class="btn-save"><i class="fa-solid fa-floppy-disk"></i> Guardar Medicamento</button>
+                  <input type="text" id="observaciones" name="observaciones" placeholder="observaciones" required>
+                  <label for="caducidad">Fecha de caducidad</label>
+                  <input type="date" name="caducidad" id="caducidad" placeholder="" required>
+                  <button type="submit" class="btn-save"><i class="fa-solid fa-floppy-disk"></i>Registrar medicamento</button>
               </form>
           </div>
 	</section>
-
-	<?php include "includes/footer.php"; ?>
+<?php include "includes/footer.php"; ?>
 </body>
 </html>

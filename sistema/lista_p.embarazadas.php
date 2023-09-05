@@ -1,36 +1,12 @@
 <?php 
    session_start();
-   if($_SESSION['rol'] != 1 and $_SESSION['rol'] != 2 and $_SESSION['rol'] != 3 and $_SESSION['rol'] != 4)
+   if($_SESSION['rol'] != 1 and $_SESSION['rol'] != 2 and $_SESSION['rol'] != 3)
     {
         header("location: ./");
     }
    include "../conexion.php"
 
 ?>
-
-<?php 
-
-if ($_SESSION['rol']==2) {
-	$idMedico = $_SESSION['idUser'];
-}elseif ($_SESSION['rol']==3) {
-	$idEnfermera = $_SESSION['idUser'];
-}else {
-	$queryidmedico = mysqli_query($conection,"SELECT s.idseguimiento, s.idmedico
-	FROM seguimiento s
-	INNER JOIN medico m ON s.idmedico = m.idmedico");
-	while ($dataidmedico =mysqli_fetch_array($queryidmedico)) {
-		$idMedico = $dataidmedico["idmedico"];
-	}
-	$queryidenfermera = mysqli_query($conection,"SELECT s.idseguimiento, s.idenfermera
-	FROM seguimiento s
-	INNER JOIN enfermeras e ON s.idenfermera = e.idenfermeras");
-	while ($dataidenfermera =mysqli_fetch_array($queryidenfermera)) {
-		$idEnfermera = $dataidenfermera["idenfermera"];
-	}
-
-}
-?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -43,8 +19,8 @@ if ($_SESSION['rol']==2) {
 	<section id="container">
 		
 		<h1>Lista de Pacientes Embarazadas</h1>
-		<a href="registro_p.embarazadas.php" class="btn_new"><i class="fa-solid fa-file-circle-plus"></i> Ingresar Paciente</a>
-		<a href="reporte_p.embarazadas.php" class="btn_small"><i class="fa-regular fa-file-pdf"></i> Descargar PDF</a>
+		<a href="registro_p.embarazadas.php" class="btn_new"><i class="fa-solid fa-file-circle-plus"></i>Ingresar Paciente</a>
+		<a href="reporte_pacientes.php" class="btn_new"><i class="fa-solid fa-floppy-disk"></i>Guardar reporte</a>
 		<form action="buscar_p.embarazadas.php" method="get" class="form_search">
 			<input type="text" name="busqueda" id="busqueda" placeholder="Buscar">
 			<input type="submit" value="Buscar" class="btn_search">
@@ -54,6 +30,9 @@ if ($_SESSION['rol']==2) {
 			<tr>
 				<th>ID</th>
                 <th>Hora</th>
+				<th>Nombre</th>
+				<th>Apellido paterno</th>
+				<th>Apellido materno</th>
 				<th>CURP</th>
 				<th>Fecha de Nacimiento</th>
 				<th>Domicilio</th>
@@ -80,54 +59,24 @@ if ($_SESSION['rol']==2) {
 			$desde = ($pagina-1) * $por_pagina;
 			$total_paginas = ceil($total_registro / $por_pagina);
 
-			if ($_SESSION["rol"]==1) {
-				$query = mysqli_query($conection,"SELECT * FROM pacientes 
-				WHERE estatus = 1 ORDER BY idpaciente ASC LIMIT $desde,$por_pagina 
-			  ");
-			}elseif ($_SESSION["rol"]==2) {
-				$query = "SELECT p.* FROM pacientes p
-			 INNER JOIN seguimiento s ON p.idpaciente = s.idpaciente
-             WHERE s.idmedico = ? AND p.estatus = 1 ORDER BY idpaciente ASC LIMIT $desde,$por_pagina";
-				  $stmt = mysqli_prepare($conection, $query);
-
-				  if ($stmt) {
-					mysqli_stmt_bind_param($stmt, "i", $idMedico);
-					mysqli_stmt_execute($stmt);
-					$result = mysqli_stmt_get_result($stmt);
-                $rows = mysqli_num_rows($result);
-                mysqli_stmt_close($stmt);
-				  }
-
-
-			}elseif ($_SESSION["rol"]==3) {
-				$query = mysqli_query($conection,"SELECT p.* FROM pacientes p
-			 INNER JOIN seguimiento s ON p.idpaciente = s.idpaciente
-                WHERE s.idenfermera = ? AND p.estatus = 1 ORDER BY idpaciente ASC LIMIT $desde,$por_pagina 
-			  ");
-
-$stmt = mysqli_prepare($conection, $query);
-
-if ($stmt) {
-  mysqli_stmt_bind_param($stmt, "i", $idMedico);
-  mysqli_stmt_execute($stmt);
-  $result = mysqli_stmt_get_result($stmt);
-$rows = mysqli_num_rows($result);
-mysqli_stmt_close($stmt);
-}
-}
+			$query = mysqli_query($conection,"SELECT * FROM pacientes 
+			                                   WHERE estatus = 1 ORDER BY idpaciente ASC LIMIT $desde,$por_pagina 
+                                             ");
 			
- 
 			mysqli_close($conection);
 
-			$rows = mysqli_num_rows($result);
-			if($rows > 0){
+			$result = mysqli_num_rows($query);
+			if($result > 0){
 
-				while ($data = mysqli_fetch_array($result)) {
-		
+				while ($data = mysqli_fetch_array($query)) {
+					
 			?>
 				<tr>
 					<td><?php echo $data["idpaciente"]; ?></td>
 					<td><?php echo $data["hora"]; ?></td>
+					<td><?php echo $data["nombre"]; ?></td>
+					<td><?php echo $data["apellido_paterno"]; ?></td>
+					<td><?php echo $data["apellido_materno"]; ?></td>
 					<td><?php echo $data["curp"]; ?></td>
 				    <td><?php echo $data["fecha_nacimiento"]; ?></td>
 					<td><?php echo $data["domicilio"]; ?></td>
@@ -136,7 +85,6 @@ mysqli_stmt_close($stmt);
 					<td><?php echo $data["estatus_paciente"]; ?></td>	
 					<td>
 						<a class="link_edit" href="editar_p.embarazada.php?id=<?php echo $data["idpaciente"]; ?>"><i class="fa-solid fa-pen-to-square"></i> Editar</a>
-                         |
 						<a class="link_delete" href="eliminar_p.embarazada.php?id=<?php echo $data["idpaciente"]; ?>"><i class="fa-solid fa-trash-can"></i> Eliminar</a>
 					</td>
 				</tr>
@@ -177,7 +125,6 @@ mysqli_stmt_close($stmt);
 			<?php } ?>
 			</ul>
 		</div>
-
 
 	</section>
 	<?php include "includes/footer.php"; ?>

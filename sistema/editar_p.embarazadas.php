@@ -10,33 +10,29 @@
 	if(!empty($_POST))
 	{
 		$alert='';
-		if(empty($_POST['curp']) || empty($_POST['domicilio']) || empty($_POST['nombre'])|| empty($_POST['apellido_paterno'])|| empty($_POST['apellido_materno']) || empty($_POST['hora']) || empty($_POST['fecha_nacimiento']) || empty($_POST['domicilio']) || empty($_POST['telefono'])|| empty($_POST['cod_postal']) || empty($_POST['estatus_paciente']))
+		if(empty($_POST['curp']) || empty($_POST['domicilio']))
 		{
 			$alert='<p class="msg_error">Todos los campos son obligatorios.</p>';
 		}else{
 
 			$idpaciente       = $_POST['id'];
-			$nombre           = $_POST['nombre'];
-			$apellido_paterno = $_POST['apellido_paterno'];
-			$apellido_materno = $_POST['apellido_materno'];
             $hora             = $_POST['hora'];
             $curp             = $_POST['curp'];
             $fecha_nacimiento = $_POST['fecha_nacimiento'];
 			$domicilio        = $_POST['domicilio'];
-			$telefono         = $_POST['telefono'];
+			$telofono         = $_POST['telefono'];
 			$cod_postal       = $_POST['cod_postal'];
 			$estatus_paciente = $_POST['estatus_paciente'];
-			$usuarioid        = $_SESSION['idUser'];  
+
 			$sql_update = mysqli_query($conection,"UPDATE pacientes
-															SET  nombre = '$nombre', apellido_paterno = '$apellido_paterno', apellido_materno='$apellido_materno', hora = '$hora', curp='$curp',fecha_nacimiento='$fecha_nacimiento',domicilio='$domicilio',
-															telefono='$telefono',cod_postal='$cod_postal',estatus_paciente='$estatus_paciente',usuario_id='$usuarioid'
+															SET hora = '$hora', curp='$curp',fecha_nacimiento='$fecha_nacimiento',domicilio='$domicilio',
+															telefono='$telefono',telefono='$telefono',cod_postal='$cod_postal',estatus_paciente='$estatus_paciente'
 															WHERE idpaciente= $idpaciente ");
 
 				if($sql_update){
-					header("Location: lista_p.embarazadas.php");
+					$alert='<p class="msg_save">Paciente actualizado correctamente.</p>';
 				}else{
-					$error = mysqli_error($conection);
-					$alert="<p class='msg_error'>Error al actualizar el Paciente: $error</p>";
+					$alert='<p class="msg_error">Error al actualizar el Paciente.</p>';
 				}
 
 		}
@@ -63,18 +59,16 @@
 	}else{
 
 		while ($data = mysqli_fetch_array($sql)) {
-
+			# code...
 			$idpaciente       = $data['idpaciente'];
             $hora             = $data['hora'];
             $curp             = $data['curp'];
-			$nombre           = $data['nombre'];
-			$apellido_paterno = $data['apellido_paterno'];
-			$apellido_materno  = $data['apellido_materno'];
             $fecha_nacimiento = $data['fecha_nacimiento'];
 			$domicilio        = $data['domicilio'];
 			$telefono         = $data['telefono'];
 			$cod_postal       = $data['cod_postal'];
 			$estatus_paciente = $data['estatus_paciente'];
+
 		}
 	}
 
@@ -94,36 +88,30 @@
 		<div class="form_register">
 			<h1>Actualizar Paciente</h1>
 			<hr>
+			<div class="alert"><?php echo isset($alert) ? $alert : ''; ?></div>
+
             <form action="" method="POST" >
                   <input type="hidden" name="id" value="<?php echo $idpaciente; ?>">
                   <label for="hora">Hora</label>
                   <input type="time" name="hora" id="hora" placeholder="" value="<?php echo $hora; ?>">
                   <label for="curp">Curp</label>
                   <input type="text" name="curp" id="curp" placeholder="Curp Completa" value="<?php echo $curp; ?>">
-                 <label for="nombre">Nombre</label>
-				 <input type="text" name="nombre" id="nombre" placeholder="nombre" value="<?php echo $nombre; ?>">
-				 <label for="apellido_paterno">Apellido paterno</label>
-				 <input type="text" name="apellido_paterno" id="apellido_paterno" placeholder="apellido paterno" value="<?php echo $apellido_paterno; ?>">
-				 <label for="apellido_materno">Apellido materno</label>
-				 <input type="text" name="apellido_materno" id="apellido_materno" placeholder="apellido materno" value="<?php echo $apellido_materno; ?>">
-				 <label for="fecha_nacimiento">Fecha de Nacimiento</label>
+                  <label for="fecha_nacimiento">Fecha de Nacimiento</label>
                   <input type="date" name="fecha_nacimiento" id="fecha_nacimiento" placeholder="" value="<?php echo $fecha_nacimiento; ?>">
 				  <label for="domicilio">Domicilio</label>
                   <input type="text" name="domicilio" id="domicilio" placeholder="Domicilio Completo" value="<?php echo $domicilio; ?>">
 				  <label for="telefono">Telefono</label>
-                  <input type="number" name="telefono" id="telefono" placeholder="Numero de Telefono" value="<?php echo $telefono; ?>">
+                  <input type="number" name="telefono" id="telefono" placeholder="Fondo Fijo" value="<?php echo $fondofijo; ?>">
 				  <label for="cod_postal">Codigo Postal</label>
                   <input type="number" name="cod_postal" id="cod_postal" placeholder="Codigo Postal" value="<?php echo $cod_postal; ?>">
 				  <label for="estatus_paciente">Estatus</label>
-                  <input type="text" name="estatus_paciente" id="estatus_paciente" placeholder="Registro,Ingreso,Alta" value="<?php echo $estatus_paciente; ?>">
+                  <input type="text" name="estatus_paciente" id="estatus_paciente" placeholder="Registro,Inicio,Alta" value="<?php echo $estatus_paciente; ?>">
                  
 
                   <button type="submit" class="btn-save"><i class="fa-solid fa-floppy-disk"></i> Actualizar Paciente</button>
               </form>
           </div>
 	</section>
-
-	<div  class="alert" id="alert"><?php echo isset($alert) ? $alert : ''; ?></div>
 
 	<?php include "includes/footer.php"; ?>
 </body>

@@ -1,6 +1,6 @@
 <?php 
    session_start();
-   if($_SESSION['rol'] != 1 and $_SESSION['rol'] != 2 and $_SESSION['rol'] != 3 and $_SESSION['rol'] != 4)
+   if($_SESSION['rol'] != 1 and $_SESSION['rol'] != 2 and $_SESSION['rol'] != 3)
     {
         header("location: ./");
     }
@@ -9,7 +9,7 @@
 ?>
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="e">
 <head>
 	<meta charset="UTF-8">
 	<?php include "includes/scripts.php"; ?>
@@ -28,9 +28,9 @@
         ?>
 		
 		<h1>Lista de Pacientes Embarazadas</h1>
-		<a href="registro_p.embarazadas.php" class="btn_new"><i class="fa-solid fa-file-circle-plus"></i> Ingresar Embarazada</a>
-		<a href="reporte_busqueda_p.embarazadas.php?busqueda=<?php echo $busqueda?>" class="btn_new"><i class="fa-regular fa-file-pdf"></i> Descargar PDF</a>
-		
+		<a href="registro_p.embarazadas.php" class="btn_new"><i class="fa-solid fa-file-circle-plus"></i>Ingresar Embarazada</a>
+		<a href="reporte_busqueda_pacientes.php?busqueda=<?php echo $busqueda?>" class="btn_new"><i class="fa-solid fa-floppy-disk"></i>Guardar reporte</a>
+
 		<form action="buscar_p.embarazadas.php" method="get" class="form_search">
 			<input type="text" name="busqueda" id="busqueda" placeholder="Buscar">
 			<input type="submit" value="Buscar" class="btn_search">
@@ -38,8 +38,11 @@
 
 		<table>
 		    <tr>
-				<th>ID</th>
-                <th>Hora</th>
+			<th>ID</th>
+                <th>Nombre</th>
+				<th>Apellido paterno</th>
+				<th>Apellido materno</th>
+				<th>Hora</th>
 				<th>CURP</th>
 				<th>Fecha de Nacimiento</th>
 				<th>Domicilio</th>
@@ -54,7 +57,12 @@
                                         WHERE (idpaciente LIKE '%$busqueda%' OR
 											   curp       LIKE '%$busqueda%' OR
                                                cod_postal LIKE '%$busqueda%' OR
-                                               estatus_paciente LIKE '%$busqueda%')
+											   nombre LIKE '%$busqueda%' OR
+		   									   apellido_paterno LIKE '%$busqueda%' OR
+											   apellido_materno LIKE '%$busqueda%'	OR	
+                                               estatus_paciente LIKE '%$busqueda%' OR
+											   telefono LIKE '%$busqueda%'
+											   )
                                         AND
                                         estatus = 1 ");
 			$result_register = mysqli_fetch_array($sql_registe);
@@ -72,25 +80,32 @@
 			$desde = ($pagina-1) * $por_pagina;
 			$total_paginas = ceil($total_registro / $por_pagina);
 
-			$query = mysqli_query($conection,"SELECT * FROM pacientes WHERE 
-                                              (idpaciente LIKE '%$busqueda%' OR
-											   curp       LIKE '%$busqueda%' OR
-                                               cod_postal LIKE '%$busqueda%' OR
-                                               estatus_paciente LIKE '%$busqueda%')
-                                             AND
-                                             estatus = 1 ORDER BY idpaciente ASC LIMIT $desde,$por_pagina 
+			$query = mysqli_query($conection,"SELECT * FROM pacientes
+			WHERE (idpaciente LIKE '%$busqueda%' OR
+				   curp       LIKE '%$busqueda%' OR
+				   cod_postal LIKE '%$busqueda%' OR
+				   nombre LIKE '%$busqueda%' OR
+					  apellido_paterno LIKE '%$busqueda%' OR
+				   apellido_materno LIKE '%$busqueda%'	OR	
+				   estatus_paciente LIKE '%$busqueda%' OR
+				   telefono LIKE '%$busqueda%'
+				   )
+			AND
+			estatus = 1  ORDER BY idpaciente ASC LIMIT $desde,$por_pagina 
 				");
-
 			mysqli_close($conection);
 
 			$result = mysqli_num_rows($query);
 			if($result > 0){
 
-				while ($data = mysqli_fetch_array($query)) {
-                    
+				
+				while ($data = mysqli_fetch_assoc($query)) {
 			?>
 				<tr>
 				    <td><?php echo $data["idpaciente"]; ?></td>
+					<td><?php echo $data["nombre"]?></td>
+					<td><?php echo $data["apellido_paterno"]?></td>
+					<td><?php echo $data["apellido_materno"]?></td>
 					<td><?php echo $data["hora"]; ?></td>
 					<td><?php echo $data["curp"]; ?></td>
 				    <td><?php echo $data["fecha_nacimiento"]; ?></td>
@@ -128,7 +143,7 @@
 			<?php 
 				}
 				for ($i=1; $i <= $total_paginas; $i++) { 
-					# code...
+					
 					if($i == $pagina)
 					{
 						echo '<li class="pageSelected">'.$i.'</li>';

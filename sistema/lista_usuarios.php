@@ -22,7 +22,7 @@
 		
 		<h1>Lista de usuarios</h1>
 		<a href="registro_usuario.php" class="btn_new"><i class="fa-solid fa-file-circle-plus"></i> Crear usuario</a>
-		<a href="reporte_usuarios.php" class="btn_small"><i class="fa-regular fa-file-pdf"></i> Descargar PDF</a>
+		<a href="reporte_usuarios.php" class="btn_new"><i class="fa-solid fa-floppy-disk"></i>Guardar reporte</a>
 		<form action="buscar_usuario.php" method="get" class="form_search">
 			<input type="text" name="busqueda" id="busqueda" placeholder="Buscar">
 			<input type="submit" value="Buscar" class="btn_search">
@@ -81,10 +81,9 @@
 					<td>
 						<a class="link_edit" href="editar_usuario.php?id=<?php echo $data["idusuario"]; ?>"><i class="fa-solid fa-pen-to-square"></i> Editar</a>
 
-					<?php if($data["idusuario"] != 1){ ?>
 						|
 						<a class="link_delete" href="eliminar_usuario.php?id=<?php echo $data["idusuario"]; ?>"><i class="fa-solid fa-trash-can"></i> Eliminar</a>
-					<?php } ?>
+					
 						
 					</td>
 				</tr>

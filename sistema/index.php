@@ -6,15 +6,12 @@
 <head>
 	<meta charset="UTF-8">
 	<?php include "includes/scripts.php"?>
-	<title>SCSG</title>
+	<title>ISCPE</title>
 </head>
 <body>
     <?php include "includes/header.php";?>
 	<section id="container">
-	   <div align="center">
-        <h1 align="center"><i><b>Bienvenido al Sistema para el Seguimiento de Pacientes Embarazadas</b></i></h1>
-		<img src="img/embarazada.jpg" alt="" width="45%" height="45%">
-	   </div>
+		<h1>Bienvenido al Sistema para el Seguimiento de Pacientes Embarazadas</h1>
 	</section>
 
 	<?php include "includes/footer.php"; ?>

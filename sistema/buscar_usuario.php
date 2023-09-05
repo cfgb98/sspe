@@ -34,9 +34,9 @@
 		
 		<h1>Lista de usuarios</h1>
 		<a href="registro_usuario.php" class="btn_new">Crear usuario</a>
-		<a href="reporte_busqueda_usuario.php?busqueda=<?php echo $busqueda?>" class="btn_new"><i class="fa-regular fa-file-pdf"></i> Descargar PDF</a>
-
+		<a href="reporte_busqueda_usuario.php?busqueda=<?php echo $busqueda?>" class="btn_new"><i class="fa-solid fa-floppy-disk"></i>Guardar reporte</a>
 		<form action="buscar_usuario.php" method="get" class="form_search">
+		
 			<input type="text" name="busqueda" id="busqueda" placeholder="Buscar" value="<?php echo $busqueda; ?>">
 			<input type="submit" value="Buscar" class="btn_search">
 		</form>
@@ -56,15 +56,15 @@
 		<?php 
 			//Paginador
 			$rol = '';
-			if($busqueda == 'administrador')
+			if($busqueda == 'Administrador')
 			{
 				$rol = " OR rol LIKE '%1%' ";
 
-			}else if($busqueda == 'supervisor'){
+			}else if($busqueda == 'Medico'){
 
 				$rol = " OR rol LIKE '%2%' ";
 
-			}else if($busqueda == 'vendedor'){
+			}else if($busqueda == 'Enfermero'){
 
 				$rol = " OR rol LIKE '%3%' ";
 			}
@@ -76,20 +76,19 @@
 																        apellido_materno LIKE '%$busqueda%' OR 
 																		nombre LIKE '%$busqueda%' OR 
 																		correo LIKE '%$busqueda%' OR 
-																		usuario LIKE '%$busqueda%' 
-																		$rol  ) 
+																		usuario LIKE '%$busqueda%')
+																		$rol   
 																AND estatus = 1  ");
 
 			$result_register = mysqli_fetch_array($sql_registe);
 			$total_registro = $result_register['total_registro'];
-
 			$por_pagina = 5;
 
 			if(empty($_GET['pagina']))
 			{
 				$pagina = 1;
 			}else{
-				$pagina = $_GET['pagina'];
+				$pagina = (int)$_GET['pagina'];
 			}
 
 			$desde = ($pagina-1) * $por_pagina;
@@ -158,7 +157,7 @@
 			<?php 
 				}
 				for ($i=1; $i <= $total_paginas; $i++) { 
-					# code...
+					
 					if($i == $pagina)
 					{
 						echo '<li class="pageSelected">'.$i.'</li>';
