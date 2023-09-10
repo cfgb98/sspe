@@ -17,7 +17,7 @@ if(!empty($_POST))
     $_POST['cuantos_abortos'] < 0 || empty(trim($_POST['dilatacion'])) || empty(trim($_POST['amnios'])) ||
     empty(trim($_POST['borramiento'])) || $_POST['frecuencia_fetal'] <= 0 || empty(trim($_POST['presion_arterial'])) ||
     empty(trim($_POST['urgencias'])) || empty(trim($_POST['idmedico'])) || empty(trim($_POST['idenfermera'])) ||
-    empty(trim($_POST['idmedicamento'])) || empty(trim($_POST['estatus_seguimiento']))))
+    empty(trim($_POST['idmedicamentos'])) || empty(trim($_POST['estatus_seguimiento']))))
     {
       
         $alert='<p class="msg_error">Todos los campos son obligatorios.</p>';
@@ -42,14 +42,28 @@ if(!empty($_POST))
             $frecuencia_fetal = $_POST['frecuencia_fetal'];
             $presion_arterial = $_POST['presion_arterial'];
             $urgencias = $_POST['urgencias'];
-            $idmedicamento = $_POST['idmedicamento'];
+            $idmedicamentos = $_POST['idmedicamentos'];
             $idenfermera = $_POST['idenfermera'];
             $idmedico = $_POST['idmedico'];
             $usuarioid = $_POST['idusuario'];
             $estatus_seguimiento = $_POST['estatus_seguimiento'];
 
-            $query_insert = mysqli_query($conection,"INSERT INTO seguimiento(idpaciente,cuantos_embarazos,cuantos_partos,cuantos_abortos,dilatacion,borramiento,amnios,frecuencia_fetal,presion_arterial,urgencias,idmedicamento,idenfermera,idmedico,usuario_id,estatus_seguimiento)
-                VALUES($idpaciente,$cuantos_embarazos,$cuantos_partos,$cuantos_abortos,'$dilatacion','$borramiento','$amnios',$frecuencia_fetal,'$presion_arterial','$urgencias',$idmedicamento,$idenfermera,$idmedico,$usuarioid,'$estatus_seguimiento')");
+            $query_insert = mysqli_query($conection,"INSERT INTO seguimiento(idpaciente,cuantos_embarazos,cuantos_partos,cuantos_abortos,dilatacion,borramiento,amnios,frecuencia_fetal,presion_arterial,urgencias,,idenfermera,idmedico,usuario_id,estatus_seguimiento)
+                VALUES($idpaciente,$cuantos_embarazos,$cuantos_partos,$cuantos_abortos,'$dilatacion','$borramiento','$amnios',$frecuencia_fetal,'$presion_arterial','$urgencias',$idenfermera,$idmedico,$usuarioid,'$estatus_seguimiento')");
+                $id_seguimiento = mysqli_insert_id($conection);//obtener ultimo id seguimiento
+            
+                foreach ($idmedicamentos as $idmedicamento) {
+            
+                $query_insert_seguimiento_medicamento = mysqli_query($conection,"INSERT INTO seguimiento_medicamento(idseguimiento,idmedicamento) VALUES($id_seguimiento,$idmedicamento)");
+            
+                    if (!$query_insert_seguimiento_medicamento) {
+                        $alert='<p class="msg_error">Error al insertar medicamentos en seguimiento:'. mysqli_error($conection).'</p>';
+                    } else {
+                        $alert='<p class="msg_save">Medicamentos insertados correctamente en seguimiento.</p>';
+                    }
+                    
+            }
+
             if($query_insert && mysqli_affected_rows($conection) > 0){ 
 
                 echo "Consulta insert: $query_insert";
@@ -153,7 +167,7 @@ if(!empty($_POST))
              $query_medicamentos = mysqli_query($conection,"SELECT idmedicamento, nombre_medicamento FROM medicamentos");
              $result_medicamentos = mysqli_num_rows($query_medicamentos);
              ?>
-             <select name="idmedicamento" id="medicamentos" required>
+             <select name="idmedicamentos[]" id="medicamentos" multiple required>
                 <?php
                 if ($result_medicamentos>0) {
                     while ($medicamentos = mysqli_fetch_array($query_medicamentos)) {

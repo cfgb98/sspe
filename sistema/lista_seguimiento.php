@@ -49,9 +49,9 @@ if ($_SESSION['rol']==2) {
 				<th>Frecuencia fetal</th>
 				<th>Presi&oacute;n arterial</th>
 				<th>Urgencias</th>
-				<th>ID del m&eacute;dico</th>
-				<th>ID de la enfermera</th>
-				<th>ID de Medicamentos</th>
+				<th>M&eacute;dico</th>
+				<th>Enfermera</th>
+				<th>Medicamentos</th>
 				<th>Estatus seguimiento</th>
 				<th>Acciones</th>
 			</tr>
@@ -74,12 +74,11 @@ if ($_SESSION['rol']==2) {
 			
 			$query = mysqli_query($conection,"SELECT * FROM seguimiento  WHERE estatus=1 ORDER BY idseguimiento ASC LIMIT $desde, $por_pagina");
 			//whew para solo mostrar pacientes del medico en sesion actual
-			$query_paciente = mysqli_query($conection,"SELECT p.nombre, p.apellido_paterno, p.apellido_materno FROM pacientes p  INNER JOIN seguimiento s ON p.idpaciente=s.idpaciente WHERE s.idmedico=$idMedico;");
+			$query_paciente = mysqli_query($conection,"SELECT p.nombre, p.apellido_paterno, p.apellido_materno FROM pacientes p  INNER JOIN seguimiento s ON p.idpaciente=s.idpaciente");
 			$query_medico = mysqli_query($conection,"SELECT s.idmedico,u.nombre, u.apellido_paterno, u.apellido_materno
 			FROM seguimiento s
 			INNER JOIN medico m ON s.idmedico = m.idmedico
-			INNER JOIN usuario u ON m.idusuario = u.idusuario
-			WHERE s.idmedico = $idMedico;");
+			INNER JOIN usuario u ON m.idusuario = u.idusuario");
 
 			$query_enfermera = mysqli_query($conection,"SELECT s.idenfermera,u.nombre, u.apellido_paterno, u.apellido_materno
 			FROM seguimiento s
@@ -99,10 +98,10 @@ if ($_SESSION['rol']==2) {
 					$data4=mysqli_fetch_array($query_enfermera);
 
 					$idseguimiento= (int)$data['idseguimiento'];
-					$query_medicamento = mysqli_query($conection,"SELECT m.idmedicamento
-			FROM seguimiento s
-			INNER JOIN medicamentos m ON s.idmedicamento = m.idmedicamento
-			WHERE s.idseguimiento = $idseguimiento");
+					$query_medicamento = mysqli_query($conection, "SELECT m.idmedicamento, m.nombre_medicamento
+					FROM seguimiento_medicamento sm
+					INNER JOIN medicamentos m ON sm.idmedicamento = m.idmedicamento
+					WHERE sm.idseguimiento = $idseguimiento");
 			$data5 =mysqli_fetch_array($query_medicamento);
 			
 						
@@ -119,10 +118,10 @@ if ($_SESSION['rol']==2) {
                     <td><?php echo $data['frecuencia_fetal'] ?></td>
                     <td><?php echo $data['presion_arterial'] ?></td>
                     <td><?php echo $data['urgencias'] ?></td>
-					<td><?php echo $data3['idmedico'];?></td>
-					<td><?php echo (int)$data4['idenfermera']; ?></td>
-                    <td><?php echo (int)$data5['idmedicamento']; ?></td>
-                    <td><?php echo (int)$data['estatus_seguimiento'] ?></td>
+					<td><?php echo $data3['nombre']." ".$data3['apellido_paterno']." ".$data3['apellido_materno']?></td>
+					<td><?php echo $data4['nombre']." ".$data4['apellido_paterno']." ".$data4['apellido_materno'] ?></td>
+					<td><?php echo $data5['nombre_medicamento'] ?></td>
+                    <td><?php echo $data['estatus_seguimiento'] ?></td>
                     
 					<td>
 						<a class="link_edit" href="editar_seguimiento.php?idseguimiento=<?php echo $data["idseguimiento"]; ?>"><i class="fa-solid fa-pen-to-square"></i> Editar</a>
