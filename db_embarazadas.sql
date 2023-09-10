@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 10-09-2023 a las 03:27:39
+-- Tiempo de generación: 10-09-2023 a las 21:30:21
 -- Versión del servidor: 10.4.28-MariaDB
 -- Versión de PHP: 8.2.4
 
@@ -163,8 +163,7 @@ CREATE TABLE `seguimiento` (
   `amnios` varchar(12) NOT NULL,
   `frecuencia_fetal` text DEFAULT NULL,
   `presion_arterial` text NOT NULL,
-  `urgencias` varchar(20) NOT NULL,
-  `idmedicamento` int(11) NOT NULL,
+  `urgencias` text DEFAULT NULL,
   `idenfermera` int(11) NOT NULL,
   `idmedico` int(11) NOT NULL,
   `usuario_id` int(11) NOT NULL,
@@ -176,9 +175,9 @@ CREATE TABLE `seguimiento` (
 -- Volcado de datos para la tabla `seguimiento`
 --
 
-INSERT INTO `seguimiento` (`idseguimiento`, `idpaciente`, `cuantos_embarazos`, `cuantos_partos`, `cuantas_cesareas`, `cuantos_abortos`, `dilatacion`, `borramiento`, `amnios`, `frecuencia_fetal`, `presion_arterial`, `urgencias`, `idmedicamento`, `idenfermera`, `idmedico`, `usuario_id`, `estatus_seguimiento`, `estatus`) VALUES
-(1, 1, 2, 1, 0, 1, '10cm', '100', 'Normales', '120', '120/80', 'Ninguna', 1, 1, 1, 1, 'Registro', 1),
-(2, 2, 1, 1, 0, 0, '10cm', '100', 'normales', '140', '120/80', 'No', 2, 2, 2, 5, 'Registro', 1);
+INSERT INTO `seguimiento` (`idseguimiento`, `idpaciente`, `cuantos_embarazos`, `cuantos_partos`, `cuantas_cesareas`, `cuantos_abortos`, `dilatacion`, `borramiento`, `amnios`, `frecuencia_fetal`, `presion_arterial`, `urgencias`, `idenfermera`, `idmedico`, `usuario_id`, `estatus_seguimiento`, `estatus`) VALUES
+(1, 1, 2, 1, 0, 1, '10cm', '100', 'Normales', '120', '120/80', 'Ninguna', 1, 1, 1, 'Registro', 1),
+(2, 2, 1, 1, 0, 0, '10cm', '100', 'normales', '140', '120/80', 'Ninguna', 2, 2, 5, 'Registro', 1);
 
 -- --------------------------------------------------------
 
@@ -188,9 +187,17 @@ INSERT INTO `seguimiento` (`idseguimiento`, `idpaciente`, `cuantos_embarazos`, `
 
 CREATE TABLE `seguimiento_medicamento` (
   `id_seguimientomedicamento` int(11) NOT NULL,
-  `idsegumiento` int(11) NOT NULL,
+  `idseguimiento` int(11) NOT NULL,
   `idmedicamento` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `seguimiento_medicamento`
+--
+
+INSERT INTO `seguimiento_medicamento` (`id_seguimientomedicamento`, `idseguimiento`, `idmedicamento`) VALUES
+(1, 1, 1),
+(2, 2, 2);
 
 -- --------------------------------------------------------
 
@@ -269,7 +276,6 @@ ALTER TABLE `seguimiento`
   ADD KEY `idpaciente` (`idpaciente`),
   ADD KEY `idenfermera` (`idenfermera`),
   ADD KEY `usuario_id` (`usuario_id`),
-  ADD KEY `idmedicamento` (`idmedicamento`),
   ADD KEY `idmedico` (`idmedico`);
 
 --
@@ -277,7 +283,7 @@ ALTER TABLE `seguimiento`
 --
 ALTER TABLE `seguimiento_medicamento`
   ADD PRIMARY KEY (`id_seguimientomedicamento`),
-  ADD KEY `idsegumiento` (`idsegumiento`),
+  ADD KEY `idsegumiento` (`idseguimiento`),
   ADD KEY `idmedicamento` (`idmedicamento`);
 
 --
@@ -331,7 +337,7 @@ ALTER TABLE `seguimiento`
 -- AUTO_INCREMENT de la tabla `seguimiento_medicamento`
 --
 ALTER TABLE `seguimiento_medicamento`
-  MODIFY `id_seguimientomedicamento` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_seguimientomedicamento` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT de la tabla `usuario`
@@ -372,7 +378,6 @@ ALTER TABLE `pacientes`
 --
 ALTER TABLE `seguimiento`
   ADD CONSTRAINT `seguimiento_ibfk_1` FOREIGN KEY (`usuario_id`) REFERENCES `usuario` (`idusuario`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `seguimiento_ibfk_2` FOREIGN KEY (`idmedicamento`) REFERENCES `medicamentos` (`idmedicamento`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `seguimiento_ibfk_3` FOREIGN KEY (`idpaciente`) REFERENCES `pacientes` (`idpaciente`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `seguimiento_ibfk_4` FOREIGN KEY (`idenfermera`) REFERENCES `enfermeras` (`idenfermeras`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `seguimiento_ibfk_5` FOREIGN KEY (`idmedico`) REFERENCES `medico` (`idmedico`) ON DELETE CASCADE ON UPDATE CASCADE;
@@ -381,7 +386,7 @@ ALTER TABLE `seguimiento`
 -- Filtros para la tabla `seguimiento_medicamento`
 --
 ALTER TABLE `seguimiento_medicamento`
-  ADD CONSTRAINT `seguimiento_medicamento_ibfk_1` FOREIGN KEY (`idsegumiento`) REFERENCES `seguimiento` (`idseguimiento`),
+  ADD CONSTRAINT `seguimiento_medicamento_ibfk_1` FOREIGN KEY (`idseguimiento`) REFERENCES `seguimiento` (`idseguimiento`),
   ADD CONSTRAINT `seguimiento_medicamento_ibfk_2` FOREIGN KEY (`idmedicamento`) REFERENCES `medicamentos` (`idmedicamento`);
 
 --
