@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 20-08-2023 a las 22:20:16
+-- Tiempo de generación: 10-09-2023 a las 03:27:39
 -- Versión del servidor: 10.4.28-MariaDB
 -- Versión de PHP: 8.2.4
 
@@ -64,7 +64,15 @@ CREATE TABLE `medicamentos` (
 
 INSERT INTO `medicamentos` (`idmedicamento`, `folio`, `nombre_medicamento`, `via_administracion`, `observaciones`, `fecha_caducidad`, `usuario_id`, `estatus`) VALUES
 (1, 1234567, 'Acido folico', 'Oral', 'Una tableta cada 24 horas', '2024-10-29', 5, 1),
-(2, 234567, 'materna-vitaminas', 'Oral', '1 tableta cada 12 horas', '2024-10-29', 1, 1);
+(2, 234567, 'materna-vitaminas', 'Oral', '1 tableta cada 12 horas', '2024-10-29', 1, 1),
+(3, 12345678, 'Sulfato magnesico IV', 'intravenosa o intramuscular', 'Administrar en caso de convulsiones por eclampsia	', '2024-02-10', 5, 1),
+(4, 3456789, 'acido Ursodesoxicolico', 'Oral', 'Administrar en caso de colestasis ', '2024-03-01', 5, 1),
+(5, 34567890, 'Paracetamol', 'Oral', 'Administrar en caso de dolor', '2023-12-08', 5, 1),
+(6, 34567891, 'Doxilamina ', 'Oral', 'Administrar en caso de nauseas', '2024-04-05', 5, 1),
+(7, 34567892, 'Omeprazol', 'Oral', 'Administrar en caso de acidez estomacal', '2024-01-18', 5, 1),
+(8, 134567893, 'Xilometazolina', 'Gotas nasales', 'Administrar en caso de congestion nasal', '2024-02-08', 5, 1),
+(9, 34567894, 'Amoxicilina ', 'Oral', 'Administrar en caso de alguna infeccion bacteriana', '2024-04-18', 5, 1),
+(10, 34567895, 'Metformina', 'Oral', 'Administrar en caso de diabetes gestacional', '2024-03-06', 5, 1);
 
 -- --------------------------------------------------------
 
@@ -293,7 +301,7 @@ ALTER TABLE `enfermeras`
 -- AUTO_INCREMENT de la tabla `medicamentos`
 --
 ALTER TABLE `medicamentos`
-  MODIFY `idmedicamento` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `idmedicamento` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT de la tabla `medico`
