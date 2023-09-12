@@ -17,7 +17,7 @@ if(!empty($_POST))
     $_POST['cuantos_abortos'] < 0 || empty(trim($_POST['dilatacion'])) || empty(trim($_POST['amnios'])) ||
     empty(trim($_POST['borramiento'])) || $_POST['frecuencia_fetal'] <= 0 || empty(trim($_POST['presion_arterial'])) ||
     empty(trim($_POST['urgencias'])) || empty(trim($_POST['idmedico'])) || empty(trim($_POST['idenfermera'])) ||
-    empty(trim($_POST['idmedicamentos'])) || empty(trim($_POST['estatus_seguimiento']))))
+     empty(trim($_POST['estatus_seguimiento'])) ) || empty(trim($_POST['cuantas_cesareas'])))
     {
       
         $alert='<p class="msg_error">Todos los campos son obligatorios.</p>';
@@ -36,6 +36,7 @@ if(!empty($_POST))
             $cuantos_embarazos = $_POST['cuantos_embarazos'];
             $cuantos_partos = $_POST['cuantos_partos'];
             $cuantos_abortos = $_POST['cuantos_abortos'];
+            $cuantas_cesareas = $_POST['cuantas_cesareas'];
             $dilatacion = $_POST['dilatacion'];
             $borramiento = $_POST['borramiento'];
             $amnios = $_POST['amnios'];
@@ -48,8 +49,8 @@ if(!empty($_POST))
             $usuarioid = $_POST['idusuario'];
             $estatus_seguimiento = $_POST['estatus_seguimiento'];
 
-            $query_insert = mysqli_query($conection,"INSERT INTO seguimiento(idpaciente,cuantos_embarazos,cuantos_partos,cuantos_abortos,dilatacion,borramiento,amnios,frecuencia_fetal,presion_arterial,urgencias,,idenfermera,idmedico,usuario_id,estatus_seguimiento)
-                VALUES($idpaciente,$cuantos_embarazos,$cuantos_partos,$cuantos_abortos,'$dilatacion','$borramiento','$amnios',$frecuencia_fetal,'$presion_arterial','$urgencias',$idenfermera,$idmedico,$usuarioid,'$estatus_seguimiento')");
+            $query_insert = mysqli_query($conection,"INSERT INTO seguimiento(idpaciente,cuantos_embarazos,cuantos_partos,cuantas_cesareas,cuantos_abortos,dilatacion,borramiento,amnios,frecuencia_fetal,presion_arterial,urgencias,,idenfermera,idmedico,usuario_id,estatus_seguimiento)
+                VALUES($idpaciente,$cuantos_embarazos,$cuantos_partos,$cuantas_cesareas,$cuantos_abortos,'$dilatacion','$borramiento','$amnios',$frecuencia_fetal,'$presion_arterial','$urgencias',$idenfermera,$idmedico,$usuarioid,'$estatus_seguimiento')");
                 $id_seguimiento = mysqli_insert_id($conection);//obtener ultimo id seguimiento
             
                 foreach ($idmedicamentos as $idmedicamento) {
@@ -114,7 +115,9 @@ if(!empty($_POST))
               <label for="cuantos_embarazos">Cantidad de embarazos</label>
               <input type="number" name="cuantos_embarazos" id="cuantos_embarazos" placeholder="Cantidad de embarazos" title="solo n&uacute;meros en cantidad de embarazos" pattern="^[0-9]+$"  min="1" required>
               <label for="cuantos_partos">Cantidad de partos</label>
-              <input type="number" name="cuantos_partos" id="cuantos_partos" placeholder="Cantidad de partos" title="solo n&uacute;meros en cantidad de partos" pattern="^[0-9]+$"  min="1"  required>
+              <input type="number" name="cuantos_partos" id="cuantos_partos" placeholder="Cantidad de partos" title="solo n&uacute;meros en cantidad de partos" pattern="^[0-9]+$"  min="0"  required>
+              <label for="cuantas_cesareas">Cantidad de Cesareas</label>
+              <input type="number" min="0" name="cuantas_cesareas" placeholder="cuantas_cesareas" pattern="^[0-9]+$ title="solo n&uacute;meros en cantidad de cesareas" min="0" required>
               <label for="cuantos_abortos">Cantidad de abortos</label>
               <input type="number" name="cuantos_abortos" id="cuantos_abortos" placeholder="Cantidad de abortos"  pattern="^[0-9]+$ title="solo n&uacute;meros en cantidad de abortos" min="0" required>
               <label for="dilatacion">Dilataci&oacute;n</label>
