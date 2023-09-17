@@ -21,13 +21,13 @@
 		
 		<h1>Lista de Medicamentos</h1>
 		<a href="registro_medicamento.php" class="btn_new"><i class="fa-solid fa-file-circle-plus"></i>Ingresar Medicamento</a>
-		<a href="reporte_medicamentos.php" class="btn_new"><i class="fa-solid fa-floppy-disk"></i>Guardar reporte</a>
-		<form action="buscar_medicamento.php" method="get" class="form_search">
+		<!-- <form action="buscar_medicamento.php" method="get" class="form_search">
 			<input type="text" name="busqueda" id="busqueda" placeholder="Buscar">
 			<input type="submit" value="Buscar" class="btn_search">
-		</form>
+		</form> -->
 
-		<table>
+		<table id="lista"  class="table table-striped">
+			<thead>
 			<tr>
 				<th>ID</th>
                 <th>Folio</th>
@@ -37,6 +37,8 @@
 				<th>Fecha de Caducidad</th>
 				<th>Acciones</th>
 			</tr>
+			</thead>
+			<tbody>
 		<?php 
 			//Paginador
 			$sql_registe = mysqli_query($conection,"SELECT COUNT(*) as total_registro FROM medicamentos WHERE estatus = 1 ");
@@ -55,8 +57,12 @@
 			$desde = ($pagina-1) * $por_pagina;
 			$total_paginas = ceil($total_registro / $por_pagina);
 
-			$query = mysqli_query($conection,"SELECT * FROM medicamentos 
+			/*$query = mysqli_query($conection,"SELECT * FROM medicamentos 
 			                                   WHERE estatus = 1 ORDER BY idmedicamento ASC LIMIT $desde,$por_pagina 
+                                             ");*/
+											 
+			$query = mysqli_query($conection,"SELECT * FROM medicamentos 
+			                                   WHERE estatus = 1 ORDER BY idmedicamento ASC  
                                              ");
  
 			mysqli_close($conection);
@@ -87,9 +93,9 @@
 			}
 		 ?>
 
-
+		</tbody>
 		</table>
-		<div class="paginador">
+		<!--<div class="paginador">
 			<ul>
 			<?php 
 				if($pagina != 1)
@@ -116,10 +122,23 @@
 				<li><a href="?pagina=<?php echo $total_paginas; ?> "><i class="fa-solid fa-forward-step"></i></a></li>
 			<?php } ?>
 			</ul>
-		</div>
+		</div>-->
 
 
 	</section>
 	<?php include "includes/footer.php"; ?>
 </body>
+<script>
+$(document).ready(function(){
+   var table = new DataTable('#lista', {
+    language: {
+        url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json',
+    },
+	dom: 'Bfrtip',
+        buttons: [
+            'copy', 'csv', 'excel', 'pdf', 'print'
+        ]
+	});
+});
+</script>
 </html>

@@ -15,6 +15,18 @@ if ($_SESSION['rol']==2) {
 }elseif ($_SESSION['rol']==3) {
 	$idEnfermera = $_SESSION['idUser'];
 }
+
+$qmed="select idmedicamento,nombre_medicamento from medicamentos where  estatus=1";
+					$rqmed=mysqli_query($conection,$qmed);
+					while($datam =mysqli_fetch_row($rqmed)){
+						$cat_medicamentos[$datam[0]]=$datam[1];
+					}
+$qmedo="select idmedicamento,observaciones from medicamentos where  estatus=1";
+					$rqmedo=mysqli_query($conection,$qmedo);
+					while($datamo =mysqli_fetch_row($rqmedo)){
+						$cat_medicamentoso[$datamo[0]]=$datamo[1];
+					}
+
 ?>
 
 <!DOCTYPE html>
@@ -31,12 +43,13 @@ if ($_SESSION['rol']==2) {
 		<h1>Lista de Seguimiento</h1>
 		<a href="registro_seguimiento.php" class="btn_new"><i class="fa-solid fa-file-circle-plus"></i> Crear Seguimiento</a>
 		
-		<form action="buscar_seguimiento.php" method="get" class="form_search">
+		<!-- <form action="buscar_seguimiento.php" method="get" class="form_search">
 			<input type="text" name="busqueda" id="busqueda" placeholder="Buscar">
 			<input type="submit" value="Buscar" class="btn_search">
-		</form>
-
-		<table>
+		</form> -->
+		<div style="width:100%" class="col-12 nowrap">
+		<table id="lista"  class="display nowrap table-striped " style="width:100%">
+			<thead>
 			<tr>
 				<th>ID</th>
 				<th>Nombre del paciente</th>
@@ -55,6 +68,8 @@ if ($_SESSION['rol']==2) {
 				<th>Estatus seguimiento</th>
 				<th>Acciones</th>
 			</tr>
+			</thead>
+			<tbody>
 		<?php 
 			//Paginador
 			$sql_registe = mysqli_query($conection,"SELECT COUNT(*) as total_registro FROM seguimiento WHERE estatus=1");
@@ -71,8 +86,27 @@ if ($_SESSION['rol']==2) {
 
 			$desde = ($pagina-1) * $por_pagina;
 			$total_paginas = ceil($total_registro / $por_pagina);
+			$ext="";
+			if($_SESSION['rol']==2){
+				$sql_m="select idmedico from medico where idusuario='$idMedico'";
+				$rsql_m=mysqli_query($conection,$sql_m);
+				$amedic=mysqli_fetch_row($rsql_m);
+				$elmed=$amedic[0];
+				$ext="and idmedico='$elmed'";
+				
+			}
+			if($_SESSION['rol']==3){
+				$sql_e="select idenfermeras from enfermeras where idusuario='$idEnfermera'";
+				$rsql_e=mysqli_query($conection,$sql_e);
+				$aenf=mysqli_fetch_row($rsql_e);
+				$elenf=$aenf[0];
+				
+				$ext="and idenfermera='$elenf' ";
+				
+			}
 			
-			$query = mysqli_query($conection,"SELECT * FROM seguimiento  WHERE estatus=1 ORDER BY idseguimiento ASC LIMIT $desde, $por_pagina");
+			$query = mysqli_query($conection,"SELECT * FROM seguimiento  WHERE estatus=1 $ext ORDER BY idseguimiento ASC ");
+			//echo "SELECT * FROM seguimiento   WHERE estatus=1 ORDER BY idseguimiento ASC ";
 			//whew para solo mostrar pacientes del medico en sesion actual
 			$query_paciente = mysqli_query($conection,"SELECT p.nombre, p.apellido_paterno, p.apellido_materno FROM pacientes p  INNER JOIN seguimiento s ON p.idpaciente=s.idpaciente");
 			$query_medico = mysqli_query($conection,"SELECT s.idmedico,u.nombre, u.apellido_paterno, u.apellido_materno
@@ -84,7 +118,7 @@ if ($_SESSION['rol']==2) {
 			FROM seguimiento s
 			INNER JOIN enfermeras e ON s.idenfermera = e.idenfermeras
 			INNER JOIN usuario u ON e.idusuario = u.idusuario;");
-
+			
 
 			$result = mysqli_num_rows($query);
 			$result_paciente = mysqli_num_rows($query_paciente);
@@ -98,11 +132,25 @@ if ($_SESSION['rol']==2) {
 					$data4=mysqli_fetch_array($query_enfermera);
 
 					$idseguimiento= (int)$data['idseguimiento'];
-					$query_medicamento = mysqli_query($conection, "SELECT m.idmedicamento, m.nombre_medicamento
+					/*$query_medicamento = mysqli_query($conection, "SELECT m.idmedicamento, m.nombre_medicamento
 					FROM seguimiento_medicamento sm
 					INNER JOIN medicamentos m ON sm.idmedicamento = m.idmedicamento
 					WHERE sm.idseguimiento = $idseguimiento");
-			$data5 =mysqli_fetch_array($query_medicamento);
+			$data5 =mysqli_fetch_array($query_medicamento);*/
+					$qm="select idmedicamento from seguimiento_medicamento where idseguimiento='$idseguimiento' and estatus=1";
+					$rqm=mysqli_query($conection,$qm);
+					
+					$o=0;
+					$meds="";
+					$medso="";
+					while($data5 =mysqli_fetch_array($rqm)){
+						$meds.='<div class="alert alert-primary" role="alert"><b>'.$cat_medicamentos[$data5['idmedicamento']]."</b> <br>".$cat_medicamentoso[$data5['idmedicamento']].'</div>';
+						
+
+					}
+					//$meds=substr($meds,0,-6);
+					
+					
 			
 						
 			?>
@@ -118,9 +166,9 @@ if ($_SESSION['rol']==2) {
                     <td><?php echo $data['frecuencia_fetal'] ?></td>
                     <td><?php echo $data['presion_arterial'] ?></td>
                     <td><?php echo $data['urgencias'] ?></td>
-					<td><?php echo $data3['nombre']." ".$data3['apellido_paterno']." ".$data3['apellido_materno']?></td>
-					<td><?php echo $data4['nombre']." ".$data4['apellido_paterno']." ".$data4['apellido_materno'] ?></td>
-					<td><?php echo $data5['nombre_medicamento'] ?></td>
+					<td><img src="img/med.png" style="height:50px"><?php echo $data3['nombre']." ".$data3['apellido_paterno']." ".$data3['apellido_materno']?></td>
+					<td><img src="img/enf.png" style="height:50px"><?php echo $data4['nombre']." ".$data4['apellido_paterno']." ".$data4['apellido_materno'] ?></td>
+					<td><?php echo $meds ?></td>
                     <td><?php echo $data['estatus_seguimiento'] ?></td>
                     
 					<td>
@@ -140,11 +188,11 @@ if ($_SESSION['rol']==2) {
 			}
 		 ?>
 
-
+		</tbody>
 		</table>
-		<a href="reporte_seguimientos.php" class="btn_new"><i class="fa-solid fa-floppy-disk"></i>Guardar reporte</a>
+		</div>
 
-		<div class="paginador">
+		<!--<div class="paginador">
 			<ul>
 			<?php 
 				if($pagina != 1)
@@ -171,9 +219,35 @@ if ($_SESSION['rol']==2) {
 				<li><a href="?pagina=<?php echo $total_paginas; ?> "><i class="fa-solid fa-forward-step"></i></a></li>
 			<?php } ?>
 			</ul>
-		</div>
+		</div>-->
 	</section>
 	
 	<?php include "includes/footer.php"; ?>
 </body>
+<script>
+$(document).ready(function(){
+   var table = new DataTable('#lista', {
+    language: {
+        url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json',
+    },
+	dom: 'Bfrtip',
+        buttons: [
+            'copy', 'csv', 'excel', 'pdf', 'print'
+        ],
+	columnDefs: [
+        {
+            className: 'dtr-control',
+            orderable: false,
+            targets: 0
+        }
+    ],
+    order: [1, 'asc'],
+    responsive: {
+        details: {
+            type: 'column'
+        }
+    }
+	});
+});
+</script>
 </html>

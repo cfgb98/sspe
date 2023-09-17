@@ -5,6 +5,7 @@
         header("location: ./");
     }
 	include "../conexion.php";
+	include "funciones.php";
 
 
 	if(!empty($_POST))
@@ -15,12 +16,12 @@
 			$alert='<p class="msg_error">Todos los campos son obligatorios.</p>';
 		}else{
 
-			$idmedicamento      = $_POST['idmedicamento'];
-            $folio              = $_POST['folio'];
-			$nombre           = $_POST['nombre_medicamento'];
-			$via_administracion = $_POST['via_administracion'];
-			$observaciones = $_POST['observaciones'];
-            $fecha_caducidad = $_POST['fecha_caducidad'];
+			$idmedicamento      = cacha('idmedicamento');
+            $folio              = cacha('folio');
+			$nombre           = cacha('nombre_medicamento');
+			$via_administracion = cacha('via_administracion');
+			$observaciones = cacha('observaciones');
+            $fecha_caducidad = cacha('fecha_caducidad');
 			$usuarioid        = $_SESSION['idUser']; 
 			
 
@@ -31,7 +32,7 @@
 				if($sql_update){
 				
                     if (mysqli_affected_rows($conection)>0) {
-                        header("Location: lista_medicamento.php");
+                       // header("Location: lista_medicamento.php");
                     }
 				}else{
 					$error = mysqli_error($conection);
@@ -86,7 +87,7 @@
 	<section id="container">
 		
 		<div class="form_register">
-			<h1>Actualizar Medicamento</h1>
+			<h1><i class="fas fa-pills"></i> Actualizar Medicamento</h1>
 			<hr>
             <form action="" method="POST" >
                   <input type="hidden" name="idmedicamento" value="<?php echo $idmedicamento; ?>">
@@ -102,6 +103,7 @@
 				 <input type="date" name="fecha_caducidad" id="fecha_caducidad" value="<?php echo $fecha_caducidad; ?>">
                   <button type="submit" class="btn-save"><i class="fa-solid fa-floppy-disk"></i> Actualizar Medicamento</button>
               </form>
+			  <a href="javascript: history.go(-1)" >Volver Atr&aacute;s</a>
           </div>
 	</section>
 

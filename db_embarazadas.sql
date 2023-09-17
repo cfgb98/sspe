@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 10-09-2023 a las 21:30:21
+-- Tiempo de generación: 17-09-2023 a las 23:35:22
 -- Versión del servidor: 10.4.28-MariaDB
 -- Versión de PHP: 8.2.4
 
@@ -176,8 +176,8 @@ CREATE TABLE `seguimiento` (
 --
 
 INSERT INTO `seguimiento` (`idseguimiento`, `idpaciente`, `cuantos_embarazos`, `cuantos_partos`, `cuantas_cesareas`, `cuantos_abortos`, `dilatacion`, `borramiento`, `amnios`, `frecuencia_fetal`, `presion_arterial`, `urgencias`, `idenfermera`, `idmedico`, `usuario_id`, `estatus_seguimiento`, `estatus`) VALUES
-(1, 1, 2, 1, 0, 1, '10cm', '100', 'Normales', '120', '120/80', 'Ninguna', 1, 1, 1, 'Registro', 1),
-(2, 2, 1, 1, 0, 0, '10cm', '100', 'normales', '140', '120/80', 'Ninguna', 2, 2, 5, 'Registro', 1);
+(1, 1, 2, 1, 0, 1, '10CM', '100', 'NORMALES', '120', '120/80', 'NINGUNA', 1, 2, 5, 'PROCESO', 1),
+(2, 2, 1, 1, 0, 0, '10CM', '100', 'NORMALES', '140', '120/80', 'NINGUNA', 2, 1, 5, 'PROCESO', 1);
 
 -- --------------------------------------------------------
 
@@ -188,16 +188,17 @@ INSERT INTO `seguimiento` (`idseguimiento`, `idpaciente`, `cuantos_embarazos`, `
 CREATE TABLE `seguimiento_medicamento` (
   `id_seguimientomedicamento` int(11) NOT NULL,
   `idseguimiento` int(11) NOT NULL,
-  `idmedicamento` int(11) NOT NULL
+  `idmedicamento` int(11) NOT NULL,
+  `estatus` tinyint(1) DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `seguimiento_medicamento`
 --
 
-INSERT INTO `seguimiento_medicamento` (`id_seguimientomedicamento`, `idseguimiento`, `idmedicamento`) VALUES
-(1, 1, 1),
-(2, 2, 2);
+INSERT INTO `seguimiento_medicamento` (`id_seguimientomedicamento`, `idseguimiento`, `idmedicamento`, `estatus`) VALUES
+(1, 1, 1, 1),
+(2, 2, 2, 1);
 
 -- --------------------------------------------------------
 

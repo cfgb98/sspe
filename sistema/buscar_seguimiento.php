@@ -70,7 +70,8 @@
             <input type="submit" value="Buscar" class="btn_search">
         </form>
 
-        <table>
+        <table id="lista"  class="table table-striped">
+			<thead>
             <tr>
                 <th>ID Seguimiento</th>
                 <th>Nombre Paciente</th>
@@ -89,6 +90,8 @@
                 <th>Estatus Seguimiento</th>
                 <th>Acciones</th>
             </tr>
+			</thead>
+			<tbody>
             <?php 
                 if ($query) {
                     while ($data = mysqli_fetch_array($query)) {
@@ -121,6 +124,7 @@
                     }
                 }
             ?>
+		</tbody>
         </table>
 
         <?php 
@@ -157,4 +161,13 @@
     <a href="reporte_busqueda_seguimiento.php?busqueda=<?php echo $busqueda?>" class="btn_new"><i class="fa-solid fa-floppy-disk"></i>Guardar reporte</a>
     <?php include "includes/footer.php"; ?>
 </body>
+<script>
+$(document).ready(function(){
+   var table = new DataTable('#lista', {
+    language: {
+        url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json',
+    },
+	});
+});
+</script>
 </html>

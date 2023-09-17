@@ -36,7 +36,8 @@
 			<input type="submit" value="Buscar" class="btn_search">
 		</form>
 
-		<table>
+		<table id="lista"  class="table table-striped">
+			<thead>
 		    <tr>
 			<th>ID</th>
                 <th>Nombre</th>
@@ -51,6 +52,8 @@
 				<th>Estatus de Paciente</th>
 				<th>Acciones</th>
 			</tr>
+			</thead>
+			<tbody>
 		<?php 
 			//Paginador
 			$sql_registe = mysqli_query($conection,"SELECT COUNT(*) as total_registro FROM pacientes
@@ -130,7 +133,7 @@
 			}
 		 ?>
 
-
+		</tbody>
 		</table>
 		<div class="paginador">
 			<ul>
@@ -165,4 +168,13 @@
 	</section>
 	<?php include "includes/footer.php"; ?>
 </body>
+<script>
+$(document).ready(function(){
+   var table = new DataTable('#lista', {
+    language: {
+        url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json',
+    },
+	});
+});
+</script>
 </html>

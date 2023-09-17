@@ -8,10 +8,11 @@ if($_SESSION['rol'] != 1 and $_SESSION['rol'] != 2)
 }
 
 include "../conexion.php";
+include "funciones.php";
 
 if(!empty($_POST))
 {
-    var_dump($_POST);
+   // var_dump($_POST);
     $alert='';
     if ((empty(trim($_POST['idpaciente'])) || $_POST['cuantos_embarazos'] <= 0 || $_POST['cuantos_partos'] <= 0 ||
     $_POST['cuantos_abortos'] < 0 || empty(trim($_POST['dilatacion'])) || empty(trim($_POST['amnios'])) ||
@@ -32,28 +33,32 @@ if(!empty($_POST))
             $alert='<p class="msg_error">El paciente ya tiene seguimiento</p>';
         }else{
 
-            $idpaciente = $_POST['idpaciente'];
-            $cuantos_embarazos = $_POST['cuantos_embarazos'];
-            $cuantos_partos = $_POST['cuantos_partos'];
-            $cuantos_abortos = $_POST['cuantos_abortos'];
-            $cuantas_cesareas = $_POST['cuantas_cesareas'];
-            $dilatacion = $_POST['dilatacion'];
-            $borramiento = $_POST['borramiento'];
-            $amnios = $_POST['amnios'];
-            $frecuencia_fetal = $_POST['frecuencia_fetal'];
-            $presion_arterial = $_POST['presion_arterial'];
-            $urgencias = $_POST['urgencias'];
-            $idmedicamentos = $_POST['idmedicamentos'];
-            $idenfermera = $_POST['idenfermera'];
-            $idmedico = $_POST['idmedico'];
-            $usuarioid = $_POST['idusuario'];
-            $estatus_seguimiento = $_POST['estatus_seguimiento'];
+            $idpaciente = cacha('idpaciente');
+            $cuantos_embarazos = cacha('cuantos_embarazos');
+            $cuantos_partos = cacha('cuantos_partos');
+            $cuantos_abortos = cacha('cuantos_abortos');
+            $cuantas_cesareas = cacha('cuantas_cesareas');
+            $dilatacion = cacha('dilatacion');
+            $borramiento = cacha('borramiento');
+            $amnios = cacha('amnios');
+            $frecuencia_fetal = cacha('frecuencia_fetal');
+            $presion_arterial = str_replace("_","",cacha('presion_arterial'));
+            $urgencias = cacha('urgencias');
+            $idmedicamentos2 = $_POST['idmedicamentos'];
+			if(is_array($idmedicamentos2)){
+				$idmedicamentos=implode(",",$idmedicamentos2);
+			}
+            $idenfermera = cacha('idenfermera');
+            $idmedico = cacha('idmedico');
+            $usuarioid = cacha('idusuario');
+            $estatus_seguimiento = cacha('estatus_seguimiento');
 
-            $query_insert = mysqli_query($conection,"INSERT INTO seguimiento(idpaciente,cuantos_embarazos,cuantos_partos,cuantas_cesareas,cuantos_abortos,dilatacion,borramiento,amnios,frecuencia_fetal,presion_arterial,urgencias,,idenfermera,idmedico,usuario_id,estatus_seguimiento)
-                VALUES($idpaciente,$cuantos_embarazos,$cuantos_partos,$cuantas_cesareas,$cuantos_abortos,'$dilatacion','$borramiento','$amnios',$frecuencia_fetal,'$presion_arterial','$urgencias',$idenfermera,$idmedico,$usuarioid,'$estatus_seguimiento')");
+            $query_insert = mysqli_query($conection,"INSERT INTO seguimiento(idpaciente,cuantos_embarazos,cuantos_partos,cuantas_cesareas,cuantos_abortos,dilatacion,borramiento,amnios,frecuencia_fetal,presion_arterial,urgencias,idenfermera,idmedico,usuario_id,estatus_seguimiento)
+                VALUES('$idpaciente','$cuantos_embarazos','$cuantos_partos','$cuantas_cesareas','$cuantos_abortos','$dilatacion','$borramiento','$amnios','$frecuencia_fetal','$presion_arterial','$urgencias','$idenfermera','$idmedico','$usuarioid','$estatus_seguimiento')");
                 $id_seguimiento = mysqli_insert_id($conection);//obtener ultimo id seguimiento
-            
-                foreach ($idmedicamentos as $idmedicamento) {
+          /*  echo "INSERT INTO seguimiento(idpaciente,cuantos_embarazos,cuantos_partos,cuantas_cesareas,cuantos_abortos,dilatacion,borramiento,amnios,frecuencia_fetal,presion_arterial,urgencias,idenfermera,idmedico,usuario_id,estatus_seguimiento)
+                VALUES('$idpaciente','$cuantos_embarazos','$cuantos_partos','$cuantas_cesareas','$cuantos_abortos','$dilatacion','$borramiento','$amnios','$frecuencia_fetal','$presion_arterial','$urgencias','$idenfermera','$idmedico','$usuarioid','$estatus_seguimiento')";*/
+                /*foreach ($idmedicamentos as $idmedicamento) {
             
                 $query_insert_seguimiento_medicamento = mysqli_query($conection,"INSERT INTO seguimiento_medicamento(idseguimiento,idmedicamento) VALUES($id_seguimiento,$idmedicamento)");
             
@@ -63,11 +68,20 @@ if(!empty($_POST))
                         $alert='<p class="msg_save">Medicamentos insertados correctamente en seguimiento.</p>';
                     }
                     
-            }
+				}*/
+				for ($i=0;$i<count($idmedicamentos2);$i++){   
+					$med=$idmedicamentos2[$i];
+					$query_insert_seguimiento_medicamento = mysqli_query($conection,"INSERT INTO seguimiento_medicamento(idseguimiento,idmedicamento) VALUES($id_seguimiento,$med)");
+						if (!$query_insert_seguimiento_medicamento) {
+                        $alert='<p class="msg_error">Error al insertar medicamentos en seguimiento:'. mysqli_error($conection).'</p>';
+                    } else {
+                        $alert='<p class="msg_save">Medicamentos insertados correctamente en seguimiento.</p>';
+                    }
+				} 
 
             if($query_insert && mysqli_affected_rows($conection) > 0){ 
 
-                echo "Consulta insert: $query_insert";
+              //  echo "Consulta insert: $query_insert";
                 $alert='<p class="msg_save">Seguimiento creado correctamente.</p>';
             }else{
                 $alert='<p class="msg_error">Error al crear el seguimiento:'. mysqli_error($conection).'</p>';
@@ -90,7 +104,7 @@ if(!empty($_POST))
 <section id="container">
        
       <div class="form_register">
-          <h1><i class="fa-solid fa-user-plus"></i>Registro de Seguimiento</h1>
+          <h1><i class="fas fa-file-medical-alt"></i> Registro de Seguimiento</h1>
           <hr>
           <div class="alert"><?php echo isset($alert) ? $alert : '';?></div>
 
@@ -132,7 +146,7 @@ if(!empty($_POST))
               <input type="text" name="presion_arterial" id="presion_arterial"  placeholder="Presi&oacute;n arterial" title="solo n&uacute;meros y / en presi&oacute;n arterial"  pattern="^\d{1,3}\/\d{1,3}$" min="1"  required>
               <label for="urgencias">Urgencias</label>
               <input type="text" name="urgencias" id="urgencias" placeholder="Si ha tenido urgencias y su descripci&oacute;n"  pattern="^[A-Za-z0-9\s.]+$" title="Solo letras, espacios en  y numeros en urgencias" required>
-              <label for="medico">Nombre del m&eacute;dico</label>
+              <label for="medico">Nombre del m&eacute;dico<img class="photouser" src="img/med.png" alt="Usuario"></label>
               <?php
                 $query_nombre_medico = mysqli_query($conection," SELECT u.idusuario, u.nombre, u.apellido_paterno, u.apellido_materno, m.idmedico FROM usuario u INNER JOIN medico m  ON u.idusuario = m.idusuario");
                 $result_nombre_medico = mysqli_num_rows($query_nombre_medico);
@@ -149,7 +163,7 @@ if(!empty($_POST))
                 }
                 ?>
               </select>
-             <label for="enfermera">Enfermera</label>
+             <label for="enfermera">Enfermera<img class="photouser" src="img/enf.png" alt="Usuario"></label>
             <?php
             $query_nombre_enfermera = mysqli_query($conection,"SELECT u.idusuario, u.nombre,u.apellido_paterno, u.apellido_materno, e.idenfermeras FROM usuario u INNER JOIN enfermeras e ON u.idusuario = e.idusuario");
             $result_nombre_enfermera = mysqli_num_rows($query_nombre_enfermera);
@@ -183,7 +197,12 @@ if(!empty($_POST))
                 ?>
              </select>
             <label for="estatus_seguimiento">Estatus del seguimiento</label>
-            <input type="text" name="estatus_seguimiento" id="estatus_seguimiento" placeholder="Estatus del seguimiento" required>
+          <!--  <input type="text" name="estatus_seguimiento" id="estatus_seguimiento" placeholder="Estatus del seguimiento" required>-->
+          <select name="estatus_seguimiento" id="estatus_seguimiento" required >
+                      <option value="PROCESO" >PROCESO</option>
+                      <option value="INTERMEDIO" >INTERMEDIO</option>
+                      <option value="SALIDA" >SALIDA</option>
+            </select>
               <button type="submit" class="btn-save"><i class="fa-solid fa-floppy-disk"></i>Crear Seguimiento</button>
           </form>
           <a href="javascript: history.go(-1)" >Volver Atr&aacute;s</a>
@@ -192,4 +211,11 @@ if(!empty($_POST))
 
 <?php include "includes/footer.php"; ?>
 </body>
+<script>
+$(document).ready(function(){
+ // alert('entra');
+  $('#medicamentos').selectize();
+  $('#presion_arterial').mask('999?/999?',{autoclear: false});
+});
+</script>
 </html>

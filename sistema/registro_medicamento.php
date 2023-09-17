@@ -7,6 +7,7 @@ header("location: ./");
 }
 
 include "../conexion.php";
+include "funciones.php";
 
 
 if(!empty($_POST))
@@ -18,11 +19,11 @@ if(!empty($_POST))
         }else{
           
            
-            $folio= $_POST['folio'];
-            $nombre = $_POST['nombre'];
-            $via = $_POST['via'];
-            $observaciones = $_POST['observaciones'];
-            $caducidad          = $_POST['caducidad'];
+            $folio= cacha('folio');
+            $nombre = cacha('nombre');
+            $via = cacha('via');
+            $observaciones = cacha('observaciones');
+            $caducidad          = cacha('caducidad');
             $idusuario        = $_SESSION['idUser'];
 
         $query_insert = mysqli_query($conection,"INSERT INTO medicamentos(folio,nombre_medicamento,via_administracion,observaciones,fecha_caducidad,usuario_id)
@@ -53,7 +54,7 @@ if(!empty($_POST))
 <section id="container">
 		
 		<div class="form_register">
-			<h1>Registro de medicamentos</h1>
+			<h1><i class="fas fa-pills"></i> Registro de medicamentos</h1>
 			<hr>
 			<div class="alert"><?php echo isset($alert) ? $alert : ''; ?></div>
 
@@ -72,6 +73,7 @@ if(!empty($_POST))
               </form>
           </div>
 	</section>
+    <a href="javascript: history.go(-1)" >Volver Atr&aacute;s</a>
 <?php include "includes/footer.php"; ?>
 </body>
 </html>

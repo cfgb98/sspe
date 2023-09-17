@@ -40,7 +40,8 @@
 			<input type="submit" value="Buscar" class="btn_search">
 		</form>
 
-		<table>
+		<table id="lista"  class="table table-striped">
+			<thead>
 			<tr>
 				<th>ID</th>
 				<th>Folio</th>
@@ -50,6 +51,8 @@
 				<th>Fecha de caducidad</th>
 				<th>Acciones</th>
 			</tr>
+			</thead>
+			<tbody>
 		<?php 
 			//Paginador
 			
@@ -119,7 +122,7 @@
 			}
 		 ?>
 
-
+		</tbody>
 		</table>
 <?php 
 	
@@ -160,4 +163,13 @@
 	</section>
 	<?php include "includes/footer.php"; ?>
 </body>
+<script>
+$(document).ready(function(){
+   var table = new DataTable('#lista', {
+    language: {
+        url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json',
+    },
+	});
+});
+</script>
 </html>

@@ -7,6 +7,7 @@
 	}
 
 	include "../conexion.php";
+	include "funciones.php";
 
 	if(!empty($_POST))
 	{
@@ -16,15 +17,15 @@
 			$alert='<p class="msg_error">Todos los campos son obligatorios.</p>';
 		}else{
 
-			$idUsuario         = $_POST['idUsuario'];
-			$apellido_paterno  = $_POST['apellido_paterno'];
-			$apellido_materno  = $_POST['apellido_materno'];
-			$nombre            = $_POST['nombre'];
-			$cedula            = $_POST['cedula'];
-			$email             = $_POST['correo'];
-			$user              = $_POST['usuario'];
+			$idUsuario         = cacha('idUsuario');
+			$apellido_paterno  = cacha('apellido_paterno');
+			$apellido_materno  = cacha('apellido_materno');
+			$nombre            = cacha('nombre');
+			$cedula            = cacha('cedula');
+			$email             = cacha('correo');
+			$user              = cacha('usuario');
 			$clave             = md5($_POST['clave']);
-			$rol               = $_POST['rol'];
+			$rol               = cacha ('rol');
 
 
 			$query = mysqli_query($conection,"SELECT * FROM usuario 
@@ -120,7 +121,7 @@
 	<section id="container">
 		
 		<div class="form_register">
-			<h1>Actualizar usuario</h1>
+			<h1><i class="fa-solid fa-user-plus"></i> Actualizar usuario</h1>
 			<hr>
 			<div class="alert"><?php echo isset($alert) ? $alert : ''; ?></div>
 

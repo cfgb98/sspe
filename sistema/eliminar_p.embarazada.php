@@ -62,7 +62,7 @@
     <?php include "includes/header.php";?>
 	<section id="container">
 		<div class="data_delete">
-		    <i class="fa-solid fa-user-xmark fa-7x" style="color: red"></i>
+	    	<i class="fas fa-head-side-mask fa-7x" style="color: red"></i>
 		   <br>
 		   <br>
            <h2>¿Est&aacute; seguro de eliminar el Siguiente Paciente?</h2>

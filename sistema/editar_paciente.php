@@ -5,6 +5,7 @@
         header("location: ./");
     }
 	include "../conexion.php";
+	include "funciones.php";
 
 
 	if(!empty($_POST))
@@ -15,10 +16,10 @@
 			$alert='<p class="msg_error">Todos los campos son obligatorios.</p>';
 		}else{
 
-			$idmaterial  = $_POST['id'];
-            $clave      = $_POST['clave'];
-            $material   = $_POST['material'];
-            $fondofijo  = $_POST['fondofijo'];
+			$idmaterial  = cacha('id');
+            $clave      = cacha('clave');
+            $material   = cacha('material');
+            $fondofijo  = cacha('fondofijo');
 
 			$sql_update = mysqli_query($conection,"UPDATE material
 															SET clave = '$clave', material='$material',fondofijo='$fondofijo'

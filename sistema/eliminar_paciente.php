@@ -60,7 +60,7 @@
     <?php include "includes/header.php";?>
 	<section id="container">
 		<div class="data_delete">
-		    <i class="fa-solid fa-user-xmark fa-7x" style="color: red"></i>
+	    	<i class="fas fa-clipboard-user fa-7x"  style="color: red"></i>
 		   <br>
 		   <br>
            <h2>¿Está seguro de eliminar la Siguiente Entrada?</h2>

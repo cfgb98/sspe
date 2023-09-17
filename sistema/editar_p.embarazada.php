@@ -5,6 +5,7 @@
         header("location: ./");
     }
 	include "../conexion.php";
+	include "funciones.php";
 
 
 	if(!empty($_POST))
@@ -15,25 +16,25 @@
 			$alert='<p class="msg_error">Todos los campos son obligatorios.</p>';
 		}else{
 
-			$idpaciente       = $_POST['id'];
-			$nombre           = $_POST['nombre'];
-			$apellido_paterno = $_POST['apellido_paterno'];
-			$apellido_materno = $_POST['apellido_materno'];
-            $hora             = $_POST['hora'];
-            $curp             = $_POST['curp'];
-            $fecha_nacimiento = $_POST['fecha_nacimiento'];
-			$domicilio        = $_POST['domicilio'];
-			$telefono         = $_POST['telefono'];
-			$cod_postal       = $_POST['cod_postal'];
-			$estatus_paciente = $_POST['estatus_paciente'];
+			$idpaciente       = cacha('id');
+			$nombre           = cacha('nombre');
+			$apellido_paterno = cacha('apellido_paterno');
+			$apellido_materno = cacha('apellido_materno');
+            $hora             = cacha('hora');
+            $curp             = cacha('curp');
+            $fecha_nacimiento = cacha('fecha_nacimiento');
+			$domicilio        = cacha('domicilio');
+			$telefono         = cacha('telefono');
+			$cod_postal       = cacha('cod_postal');
+			$estatus_paciente = cacha('estatus_paciente');
 			$usuarioid        = $_SESSION['idUser'];  
 			$sql_update = mysqli_query($conection,"UPDATE pacientes
 															SET  nombre = '$nombre', apellido_paterno = '$apellido_paterno', apellido_materno='$apellido_materno', hora = '$hora', curp='$curp',fecha_nacimiento='$fecha_nacimiento',domicilio='$domicilio',
-															telefono='$telefono',cod_postal='$cod_postal',estatus_paciente='$estatus_paciente',usuario_id='$usuarioid'
+															telefono='$telefono',cod_postal='$cod_postal',estatus_paciente='$estatus_paciente',idusuario='$usuarioid'
 															WHERE idpaciente= $idpaciente ");
 
 				if($sql_update){
-					header("Location: lista_p.embarazadas.php");
+					//header("Location: lista_p.embarazadas.php");
 				}else{
 					$error = mysqli_error($conection);
 					$alert="<p class='msg_error'>Error al actualizar el Paciente: $error</p>";
@@ -92,8 +93,9 @@
 	<section id="container">
 		
 		<div class="form_register">
-			<h1>Actualizar Paciente</h1>
+			<h1><i class="fas fa-procedures"></i> Actualizar Paciente</h1>
 			<hr>
+			<div  class="alert" id="alert"><?php echo isset($alert) ? $alert : ''; ?></div>
             <form action="" method="POST" >
                   <input type="hidden" name="id" value="<?php echo $idpaciente; ?>">
                   <label for="hora">Hora</label>
@@ -114,17 +116,24 @@
                   <input type="number" name="telefono" id="telefono" placeholder="Numero de Telefono" value="<?php echo $telefono; ?>">
 				  <label for="cod_postal">Codigo Postal</label>
                   <input type="number" name="cod_postal" id="cod_postal" placeholder="Codigo Postal" value="<?php echo $cod_postal; ?>">
-				  <label for="estatus_paciente">Estatus</label>
-                  <input type="text" name="estatus_paciente" id="estatus_paciente" placeholder="Registro,Ingreso,Alta" value="<?php echo $estatus_paciente; ?>">
+				  <label for="estatus_paciente" >Estatus</label>
+                  <!--<input type="text" name="estatus_paciente" id="estatus_paciente" placeholder="Registro,Ingreso,Alta">--->
+                  <select name="estatus_paciente" id="estatus_paciente" value="<?php echo $estatus_paciente; ?>">
+                      <option value="REGISTRO" <?php  if($estatus_paciente=="REGISTRO"){ echo "selected";} ?>>REGISTRO</option>
+                      <option value="INGRESO"  <?php  if($estatus_paciente=="INGRESO"){ echo "selected";} ?>>INGRESO</option>
+                      <option value="ALTA"  <?php  if($estatus_paciente=="ALTA"){ echo "selected";} ?>>ALTA</option>
+                  </select>
+                  
                  
 
                   <button type="submit" class="btn-save"><i class="fa-solid fa-floppy-disk"></i> Actualizar Paciente</button>
               </form>
+			  <a href="javascript: history.go(-1)" >Volver Atr&aacute;s</a>
           </div>
 	</section>
 
-	<div  class="alert" id="alert"><?php echo isset($alert) ? $alert : ''; ?></div>
-
+	
+    
 	<?php include "includes/footer.php"; ?>
 </body>
 </html>
