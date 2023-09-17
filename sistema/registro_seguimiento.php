@@ -141,7 +141,7 @@ if(!empty($_POST))
               <label for="amnios">Amnios</label>
               <input type="text" name="amnios" id="amnios" placeholder="Amnios" pattern="^[A-Za-z\s]+$" title="solo letras en amnios" required>
               <label for="frecuencia_fetal">Frecuencia fetal</label>
-              <input type="text" name="frecuencia_fetal" id="frecuencia_fetal" placeholder="Frecuencia fetal"  pattern="^\d{1,3}$" title="solo n&&uacute;meros en frecuencia fetal"  min="1"  required> 
+              <input type="text" name="frecuencia_fetal" id="frecuencia_fetal" placeholder="Frecuencia fetal" pattern="^\d{1,3}\/\d{1,3}$"  title="solo n&uacute;meros en frecuencia fetal"  min="1"  required> 
               <label for="presion_arterial">Presi&oacute;n arterial</label>
               <input type="text" name="presion_arterial" id="presion_arterial"  placeholder="Presi&oacute;n arterial" title="solo n&uacute;meros y / en presi&oacute;n arterial"  pattern="^\d{1,3}\/\d{1,3}$" min="1"  required>
               <label for="urgencias">Urgencias</label>
