@@ -18,12 +18,19 @@ if(!empty($_POST))
     $_POST['cuantos_abortos'] < 0 || empty(trim($_POST['dilatacion'])) || empty(trim($_POST['amnios'])) ||
     empty(trim($_POST['borramiento'])) || $_POST['frecuencia_fetal'] <= 0 || empty(trim($_POST['presion_arterial'])) ||
     empty(trim($_POST['urgencias'])) || empty(trim($_POST['idmedico'])) || empty(trim($_POST['idenfermera'])) ||
-     empty(trim($_POST['estatus_seguimiento'])) ) || empty(trim($_POST['cuantas_cesareas'])))
+     empty(trim($_POST['estatus_seguimiento'])) ) || $_POST['cuantas_cesareas'] <=0)
     {
       
         $alert='<p class="msg_error">Todos los campos son obligatorios.</p>';
         
-    }else{
+    }else if ( (int)$_POST['cuantos_partos']>(int)$_POST['cuantos_embarazos']) {
+        $alert='<p class="msg_error">Cantidad de partos no puede ser mayor a cantidad de embarazos.</p>';
+    }elseif ((int)$_POST['cuantos_abortos']>(int)$_POST['cuantos_embarazos']) {
+        $alert='<p class="msg_error">Cantidad de abortos no puede ser mayor a cantidad de embarazos.</p>';
+    }elseif ((int)$_POST['cuantas_cesareas']>(int)$_POST['cuantos_embarazos']) {
+        $alert='<p class="msg_error">Cantidad de cesareas no puede ser mayor a cantidad de embarazos.</p>';
+    } 
+    else{
       
         $idpaciente = $_POST['idpaciente'];
         $query = mysqli_query($conection, "SELECT COUNT(*)  AS count_seguimiento FROM seguimiento WHERE idpaciente = '$idpaciente' ");
@@ -131,13 +138,13 @@ if(!empty($_POST))
               <label for="cuantos_partos">Cantidad de partos</label>
               <input type="number" name="cuantos_partos" id="cuantos_partos" placeholder="Cantidad de partos" title="solo n&uacute;meros en cantidad de partos" pattern="^[0-9]+$"  min="0"  required>
               <label for="cuantas_cesareas">Cantidad de Cesareas</label>
-              <input type="number" min="0" name="cuantas_cesareas" placeholder="cuantas_cesareas" pattern="^[0-9]+$ title="solo n&uacute;meros en cantidad de cesareas" min="0" required>
+              <input type="number" min="0" name="cuantas_cesareas" placeholder="cuantas_cesareas" pattern="^[0-9]+$" title="solo n&uacute;meros en cantidad de cesareas" min="0" required>
               <label for="cuantos_abortos">Cantidad de abortos</label>
               <input type="number" name="cuantos_abortos" id="cuantos_abortos" placeholder="Cantidad de abortos"  pattern="^[0-9]+$ title="solo n&uacute;meros en cantidad de abortos" min="0" required>
               <label for="dilatacion">Dilataci&oacute;n</label>
               <input type="text" name="dilatacion" id="dilatacion" placeholder="Dilataci&oacute;n" pattern="^\d+cm$" title="solo letras en dilataci&oacute;n" required>
               <label for="borramiento">Borramiento</label>
-              <input type="text" name="borramiento" id="borramiento" pattern="^(100|[1-9][0-9]?|0)$"  placeholder="Borramiento" title="solo letras en numeros" required>
+              <input type="text" name="borramiento" id="borramiento" pattern="^(100|[1-9][0-9]?|0)$"  placeholder="Borramiento" title="solo n&uacute;meros en borramiento" required>
               <label for="amnios">Amnios</label>
               <input type="text" name="amnios" id="amnios" placeholder="Amnios" pattern="^[A-Za-z\s]+$" title="solo letras en amnios" required>
               <label for="frecuencia_fetal">Frecuencia fetal</label>
@@ -211,11 +218,11 @@ if(!empty($_POST))
 
 <?php include "includes/footer.php"; ?>
 </body>
-<script>
+<!-- <script>
 $(document).ready(function(){
  // alert('entra');
   $('#medicamentos').selectize();
   $('#presion_arterial').mask('999?/999?',{autoclear: false});
 });
-</script>
+</script> -->
 </html>
