@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 17-09-2023 a las 23:35:22
+-- Tiempo de generación: 18-09-2023 a las 02:33:39
 -- Versión del servidor: 10.4.28-MariaDB
 -- Versión de PHP: 8.2.4
 
@@ -123,7 +123,11 @@ CREATE TABLE `pacientes` (
 
 INSERT INTO `pacientes` (`idpaciente`, `nombre`, `apellido_paterno`, `apellido_materno`, `hora`, `curp`, `fecha_nacimiento`, `domicilio`, `telefono`, `cod_postal`, `estatus_paciente`, `estatus`, `idusuario`) VALUES
 (1, 'Miriam', 'Mojica', 'Borquez', '19:54:00', 'MOBM270280MJCRNR06', '1980-02-27', 'A la Explanada 125', '36737352', 45020, 'Registro', 1, 1),
-(2, 'Irma', 'Bernabe', 'Sanchez', '16:24:00', 'BESI670725MJCRN06', '1967-07-25', 'Al Arroyo 212', '36737958', 45020, 'Registro', 1, 5);
+(2, 'Irma', 'Bernabe', 'Sanchez', '16:24:00', 'BESI670725MJCRN06', '1967-07-25', 'Al Arroyo 212', '36737958', 45020, 'Registro', 1, 5),
+(3, 'LETICIA', 'BERNAL', 'LOPEZ', '16:51:00', 'BELL900610MNLCRNR09', '1990-06-10', 'GOMEZ FARIAS 34', '3329290410', 45060, 'REGISTRO', 1, 5),
+(4, 'GLORIA', 'ZAVALA', 'BUENO', '17:00:00', 'ZABG850515MDRNC01', '1985-05-15', 'CUMBRES 18-1', '3329166724', 45020, 'INGRESO', 1, 5),
+(5, 'GENESIS', 'SANCHEZ', 'GOMEZ', '17:30:00', 'SAGG880423MTRNC08', '1988-04-23', 'PRADERAS 124', '3624421809', 45050, 'INGRESO', 1, 5),
+(6, 'LORENA', 'RODRIGUEZ', 'GARCIA', '17:31:00', 'ROGL930120MJRRR006', '1993-01-20', 'COLINAS 624', '3679330405', 45070, 'INGRESO', 1, 5);
 
 -- --------------------------------------------------------
 
@@ -177,7 +181,11 @@ CREATE TABLE `seguimiento` (
 
 INSERT INTO `seguimiento` (`idseguimiento`, `idpaciente`, `cuantos_embarazos`, `cuantos_partos`, `cuantas_cesareas`, `cuantos_abortos`, `dilatacion`, `borramiento`, `amnios`, `frecuencia_fetal`, `presion_arterial`, `urgencias`, `idenfermera`, `idmedico`, `usuario_id`, `estatus_seguimiento`, `estatus`) VALUES
 (1, 1, 2, 1, 0, 1, '10CM', '100', 'NORMALES', '120', '120/80', 'NINGUNA', 1, 2, 5, 'PROCESO', 1),
-(2, 2, 1, 1, 0, 0, '10CM', '100', 'NORMALES', '140', '120/80', 'NINGUNA', 2, 1, 5, 'PROCESO', 1);
+(2, 2, 1, 1, 0, 0, '10CM', '100', 'NORMALES', '140', '120/80', 'NINGUNA', 2, 1, 5, 'PROCESO', 1),
+(3, 3, 2, 1, 1, 0, '5CM', '50', 'ROTOS', '133', '120/100', 'NO', 1, 1, 5, 'PROCESO', 1),
+(4, 4, 2, 1, 1, 0, '7CM', '89', 'NORMALES', '130/110', '120/80', 'NO', 2, 1, 5, 'PROCESO', 1),
+(5, 5, 3, 1, 2, 0, '30CM', '100', 'ROTOS', '130/100', '120/90', 'NO', 1, 1, 5, 'PROCESO', 1),
+(6, 6, 4, 2, 2, 0, '15CM', '10', 'NORMALES', '140/100', '120/90', 'NO', 2, 1, 5, 'PROCESO', 1);
 
 -- --------------------------------------------------------
 
@@ -198,7 +206,20 @@ CREATE TABLE `seguimiento_medicamento` (
 
 INSERT INTO `seguimiento_medicamento` (`id_seguimientomedicamento`, `idseguimiento`, `idmedicamento`, `estatus`) VALUES
 (1, 1, 1, 1),
-(2, 2, 2, 1);
+(2, 2, 2, 1),
+(3, 3, 1, 1),
+(4, 3, 5, 1),
+(5, 4, 1, 1),
+(6, 4, 2, 1),
+(7, 4, 3, 1),
+(8, 4, 4, 1),
+(9, 5, 1, 1),
+(10, 5, 5, 1),
+(11, 5, 6, 1),
+(12, 5, 7, 1),
+(13, 6, 1, 1),
+(14, 6, 4, 1),
+(15, 6, 5, 1);
 
 -- --------------------------------------------------------
 
@@ -320,7 +341,7 @@ ALTER TABLE `medico`
 -- AUTO_INCREMENT de la tabla `pacientes`
 --
 ALTER TABLE `pacientes`
-  MODIFY `idpaciente` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `idpaciente` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT de la tabla `rol`
@@ -332,13 +353,13 @@ ALTER TABLE `rol`
 -- AUTO_INCREMENT de la tabla `seguimiento`
 --
 ALTER TABLE `seguimiento`
-  MODIFY `idseguimiento` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `idseguimiento` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT de la tabla `seguimiento_medicamento`
 --
 ALTER TABLE `seguimiento_medicamento`
-  MODIFY `id_seguimientomedicamento` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id_seguimientomedicamento` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT de la tabla `usuario`
